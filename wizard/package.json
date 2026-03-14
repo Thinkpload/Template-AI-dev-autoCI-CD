@@ -1,0 +1,23 @@
+{
+  "name": "create-ai-template",
+  "version": "0.1.0",
+  "description": "Interactive CLI wizard for setting up an AI-driven development environment",
+  "type": "commonjs",
+  "bin": {
+    "create-ai-template": "./dist/index.cjs"
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run --reporter=verbose",
+    "test:coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^4.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.7.3",
+    "vitest": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
