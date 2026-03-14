@@ -85,38 +85,36 @@
 
 ## Traceability
 
-*To be populated by roadmapper*
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| WIZ-01 | — | Pending |
-| WIZ-02 | — | Pending |
-| WIZ-03 | — | Pending |
-| WIZ-04 | — | Pending |
-| WIZ-05 | — | Pending |
-| WIZ-06 | — | Pending |
-| WIZ-07 | — | Pending |
-| AI-01 | — | Pending |
-| AI-02 | — | Pending |
-| AI-03 | — | Pending |
-| AI-04 | — | Pending |
-| QA-01 | — | Pending |
-| QA-02 | — | Pending |
-| QA-03 | — | Pending |
-| QA-04 | — | Pending |
-| QA-05 | — | Pending |
-| CI-01 | — | Pending |
-| CI-02 | — | Pending |
-| CI-03 | — | Pending |
-| CI-04 | — | Pending |
-| CI-05 | — | Pending |
-| SEC-01 | — | Pending |
+| WIZ-01 | Phase 2 | Pending |
+| WIZ-02 | Phase 2 | Pending |
+| WIZ-03 | Phase 2 | Pending |
+| WIZ-04 | Phase 2 | Pending |
+| WIZ-05 | Phase 2 | Pending |
+| WIZ-06 | Phase 2 | Pending |
+| WIZ-07 | Phase 2 | Pending |
+| AI-01 | Phase 2 | Pending |
+| AI-02 | Phase 2 | Pending |
+| AI-03 | Phase 2 | Pending |
+| AI-04 | Phase 1 | Pending |
+| QA-01 | Phase 3 | Pending |
+| QA-02 | Phase 3 | Pending |
+| QA-03 | Phase 3 | Pending |
+| QA-04 | Phase 3 | Pending |
+| QA-05 | Phase 1 | Pending |
+| CI-01 | Phase 4 | Pending |
+| CI-02 | Phase 4 | Pending |
+| CI-03 | Phase 4 | Pending |
+| CI-04 | Phase 4 | Pending |
+| CI-05 | Phase 4 | Pending |
+| SEC-01 | Phase 5 | Pending |
 
 **Coverage:**
 - v1 requirements: 22 total
-- Mapped to phases: 0
-- Unmapped: 22 ⚠️
+- Mapped to phases: 22
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-14*
-*Last updated: 2026-03-14 after initial definition*
+*Last updated: 2026-03-14 after roadmap creation*
