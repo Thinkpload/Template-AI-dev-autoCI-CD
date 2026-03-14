@@ -1,0 +1,10 @@
+{
+  "permission": {
+    "read": {
+      "C:/Users/gllex/!DEV_PROJECTS_2026/!Template_BMAD+auto-CI-CD/.opencode/get-shit-done/*": "allow"
+    },
+    "external_directory": {
+      "C:/Users/gllex/!DEV_PROJECTS_2026/!Template_BMAD+auto-CI-CD/.opencode/get-shit-done/*": "allow"
+    }
+  }
+}
