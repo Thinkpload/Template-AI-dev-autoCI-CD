@@ -1,0 +1,80 @@
+name: CI — Check Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Lint · Test · Sonar · Build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Full history needed for SonarCloud blame data
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint > lint.log 2>&1 || (cat lint.log && exit 1)
+
+      - name: Run Tests
+        run: npm run test:coverage > test.log 2>&1 || (cat test.log && exit 1)
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Build
+        run: npm run build > build.log 2>&1 || (cat build.log && exit 1)
+
+      - name: Report CI Failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "CI Failed on branch \`${{ github.ref_name }}\` — run [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})." > issue_body.md
+          echo "" >> issue_body.md
+          if [ -f lint.log ]; then
+            echo "**Lint Logs:**" >> issue_body.md
+            echo '```text' >> issue_body.md
+            tail -n 50 lint.log >> issue_body.md
+            echo '```' >> issue_body.md
+            echo "" >> issue_body.md
+          fi
+          if [ -f test.log ]; then
+            echo "**Test Logs:**" >> issue_body.md
+            echo '```text' >> issue_body.md
+            tail -n 50 test.log >> issue_body.md
+            echo '```' >> issue_body.md
+            echo "" >> issue_body.md
+          fi
+          if [ -f build.log ]; then
+            echo "**Build Logs:**" >> issue_body.md
+            echo '```text' >> issue_body.md
+            tail -n 50 build.log >> issue_body.md
+            echo '```' >> issue_body.md
+            echo "" >> issue_body.md
+          fi
+          gh issue create \
+            --title "🚨 CI Failed: ${{ github.workflow }} (#${{ github.run_number }})" \
+            --body-file issue_body.md \
+            --label "bug" || true
