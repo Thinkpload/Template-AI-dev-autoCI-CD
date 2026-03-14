@@ -1,0 +1,43 @@
+name: Weekly Version Drift Check
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'  # Monday 09:00 UTC
+  workflow_dispatch:       # Allow manual trigger for testing
+
+jobs:
+  check-versions:
+    name: Resolve latest npm versions and open PR if outdated
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run version drift check
+        id: check
+        run: node wizard/scripts/check-versions.cjs
+
+      - name: Open PR if versions changed
+        if: steps.check.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: bump pinned dependency versions'
+          title: 'chore: weekly dependency version bump'
+          body: |
+            Automated weekly version bump.
+
+            Updated version constants in `wizard/src/dependency-versions.ts`.
+            Review each bump for breaking changes before merging.
+          branch: 'chore/version-bump'
+          delete-branch: true
+          labels: 'dependencies'
