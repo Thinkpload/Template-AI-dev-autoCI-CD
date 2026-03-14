@@ -12,7 +12,7 @@ Build a production-ready interactive CLI wizard distributed as an `npx` package 
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - Module registry, version pinning, template files, and line-ending guards
+- [x] **Phase 1: Foundation** - Module registry, version pinning, template files, and line-ending guards (completed 2026-03-14)
 - [ ] **Phase 2: Wizard Core** - Interactive CLI prompt sequence, UserSelections, idempotency, and AI methodology selection
 - [ ] **Phase 3: Installer Pipeline** - File merger, JSON merge, batch npm install, and code quality module activation
 - [ ] **Phase 4: Auto-Bugfix Pipeline** - CI audit step, GitHub Issue creation on failure, /fix-issue slash command, and loop guards
@@ -89,7 +89,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 3/4 | In Progress|  |
+| 1. Foundation | 4/4 | Complete   | 2026-03-14 |
 | 2. Wizard Core | 0/TBD | Not started | - |
 | 3. Installer Pipeline | 0/TBD | Not started | - |
 | 4. Auto-Bugfix Pipeline | 0/TBD | Not started | - |
