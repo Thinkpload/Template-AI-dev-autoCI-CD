@@ -1,0 +1,12 @@
+# Normalise all text files to LF on checkout
+* text=auto eol=lf
+
+# Shell scripts must always be LF (Husky hooks, setup.sh)
+*.sh text eol=lf
+
+# Binary files — never touch line endings
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff2 binary
+*.woff binary
