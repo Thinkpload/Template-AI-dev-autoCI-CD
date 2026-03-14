@@ -31,6 +31,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Check no @latest in wizard source
+        run: |
+          if grep -r "@latest" wizard/src/ 2>/dev/null; then
+            echo "ERROR: @latest found in wizard/src/ — all versions must be pinned in wizard/src/dependency-versions.ts"
+            exit 1
+          fi
+          echo "OK: no @latest found in wizard source"
+
       - name: Lint
         run: npm run lint > lint.log 2>&1 || (cat lint.log && exit 1)
 
