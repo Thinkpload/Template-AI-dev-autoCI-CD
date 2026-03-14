@@ -2,9 +2,9 @@
  * Pinned dependency versions for all wizard-installed packages.
  *
  * RULES:
- * - No @latest anywhere in this file — CI grep check will fail the build.
+ * - No floating versions (e.g. "latest") — CI grep check enforces pinning. Use exact semver only.
  * - One version constant per package — import this constant everywhere it is used.
- * - Update path: weekly CI cron resolves @latest and opens a PR with diffs to this file.
+ * - Update path: weekly CI cron resolves the latest npm version and opens a PR with diffs to this file.
  *
  * Compatible with: Node.js >=20
  */
