@@ -20,7 +20,7 @@
 - [ ] **AI-01**: User can select BMAD methodology — wizard installs BMAD v6 via npm from official public repo (`@bmad-method/bmad-agent`)
 - [ ] **AI-02**: User can select GSD workflow engine — wizard confirms GSD is active (already in repo) or updates to latest pinned version
 - [ ] **AI-03**: User can select both BMAD and GSD — both are installed and configured without conflicts
-- [ ] **AI-04**: Template pins BMAD and GSD to specific versions with a documented upgrade path (prevents silent version drift breaking agent discovery)
+- [x] **AI-04**: Template pins BMAD and GSD to specific versions with a documented upgrade path (prevents silent version drift breaking agent discovery)
 
 ### Code Quality
 
@@ -28,7 +28,7 @@
 - [ ] **QA-02**: Wizard installs and configures commitlint v19 — commit-msg hook enforces conventional commits format
 - [ ] **QA-03**: Wizard installs and configures Vitest v4 with coverage thresholds (80% statements/functions/lines, 70% branches)
 - [ ] **QA-04**: Vitest config is pre-wired to output `coverage/lcov.info` for SonarCloud consumption
-- [ ] **QA-05**: Template ships `.gitattributes` with `eol=lf` for all hook scripts (prevents Windows `\r\n` breaking Husky on Linux CI)
+- [x] **QA-05**: Template ships `.gitattributes` with `eol=lf` for all hook scripts (prevents Windows `\r\n` breaking Husky on Linux CI)
 
 ### CI/CD
 
@@ -97,12 +97,12 @@
 | AI-01 | Phase 2 | Pending |
 | AI-02 | Phase 2 | Pending |
 | AI-03 | Phase 2 | Pending |
-| AI-04 | Phase 1 | Pending |
+| AI-04 | Phase 1 | Complete |
 | QA-01 | Phase 3 | Pending |
 | QA-02 | Phase 3 | Pending |
 | QA-03 | Phase 3 | Pending |
 | QA-04 | Phase 3 | Pending |
-| QA-05 | Phase 1 | Pending |
+| QA-05 | Phase 1 | Complete |
 | CI-01 | Phase 4 | Pending |
 | CI-02 | Phase 4 | Pending |
 | CI-03 | Phase 4 | Pending |
