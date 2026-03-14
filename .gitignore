@@ -54,3 +54,4 @@ prisma/migrations/**/migration_lock.toml
 # ── Misc ──────────────────────────────────────────────────────
 .vercel
 .turbo
+.claude/settings.local.json
