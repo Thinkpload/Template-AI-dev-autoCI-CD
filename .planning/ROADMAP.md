@@ -47,7 +47,13 @@ Plans:
   3. After wizard completes, `.template-config.json` exists in the project root and contains the selected modules, their install state, and the wizard version that ran
   4. Re-running the wizard skips all modules marked as installed in `.template-config.json` and shows a "already installed — skipping" message for each
   5. Running `npx create-ai-template --yes` completes without any interactive prompts using sensible defaults, and a failed module install logs the error and continues — summarizing all failures at the end
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Wave 0: @clack/prompts install, type extensions, config.ts, test scaffolds, setup.sh
+- [ ] 02-02-PLAN.md — wizard.ts: runWizard() prompt sequence, idempotency guard, conflict validation (turns tests GREEN)
+- [ ] 02-03-PLAN.md — index.ts wiring: --yes flag, writeConfig, idempotency merge, build and smoke test
+- [ ] 02-04-PLAN.md — Human verify: interactive terminal UX, CTRL+C, --yes end-to-end
 
 ### Phase 3: Installer Pipeline
 **Goal**: Every selected code quality module is correctly installed into the target project — Husky pre-commit hook fires on staged files, commitlint enforces conventional commits, Vitest runs and reports coverage, and SonarCloud receives the coverage report
@@ -90,7 +96,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 4/4 | Complete   | 2026-03-14 |
-| 2. Wizard Core | 0/TBD | Not started | - |
+| 2. Wizard Core | 0/4 | Not started | - |
 | 3. Installer Pipeline | 0/TBD | Not started | - |
 | 4. Auto-Bugfix Pipeline | 0/TBD | Not started | - |
 | 5. Packaging and Maintenance | 0/TBD | Not started | - |
