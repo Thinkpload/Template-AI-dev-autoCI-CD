@@ -156,4 +156,10 @@ describe('coverage threshold assertions', () => {
     expect(content).toContain('lines: 80');
     expect(content).toContain('branches: 70');
   });
+
+  it('sonar-project.properties template contains correct lcov path', () => {
+    const templatePath = resolve(__dirname, '../templates/vitest/sonar-project.properties');
+    const content = readFileSync(templatePath, 'utf-8');
+    expect(content).toContain('sonar.javascript.lcov.reportPaths=coverage/lcov.info');
+  });
 });
