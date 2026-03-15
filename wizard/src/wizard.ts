@@ -52,8 +52,8 @@ export async function runWizard(yesMode = false): Promise<UserSelections> {
     const result = await select({
       message: 'Which AI methodology would you like?',
       options: [
-        { value: 'bmad' as AiMethodology, label: 'BMAD Method v6', hint: 'AI-driven development agents' },
-        { value: 'gsd' as AiMethodology, label: 'GSD Workflow Engine', hint: 'Already in repo, will activate' },
+        { value: 'bmad' as AiMethodology, label: 'BMAD Method v6', hint: 'AI-driven development methodology' },
+        { value: 'gsd' as AiMethodology, label: 'GSD Workflow Engine', hint: 'AI planning & execution framework' },
         { value: 'both' as AiMethodology, label: 'Both BMAD + GSD', hint: 'Recommended' },
       ],
       initialValue: 'both' as AiMethodology,
@@ -71,6 +71,7 @@ export async function runWizard(yesMode = false): Promise<UserSelections> {
         { value: 'claude-code' as AgenticSystem, label: 'Claude Code' },
         { value: 'cursor' as AgenticSystem, label: 'Cursor' },
         { value: 'vscode' as AgenticSystem, label: 'VS Code' },
+        { value: 'antigravity' as AgenticSystem, label: 'Antigravity (Google)', hint: 'Uses Claude as underlying model' },
       ],
       initialValue: 'claude-code' as AgenticSystem,
     });
@@ -78,24 +79,31 @@ export async function runWizard(yesMode = false): Promise<UserSelections> {
     agenticSystem = result as AgenticSystem;
   }
 
-  // Module selection — must-have pre-checked, already-installed filtered out
+  // Module selection — must-have + methodology-derived modules pre-checked, already-installed filtered out
   const mustHaveIds = availableModules
     .filter(m => m.priority === 'must-have')
     .map(m => m.id as ModuleId);
 
+  // Derive pre-checked methodology modules from the aiMethodology answer
+  // GSD is always pre-checked since it already lives in this repo
+  const methodologyPreselect: ModuleId[] = ['gsd'];
+  if (aiMethodology === 'bmad' || aiMethodology === 'both') methodologyPreselect.push('bmad');
+
+  const initialModuleIds = [...new Set([...mustHaveIds, ...methodologyPreselect])]
+    .filter(id => availableModules.some(m => m.id === id));
+
   let selectedModules: ModuleId[];
   if (yesMode) {
-    selectedModules = [...mustHaveIds, 'bmad' as ModuleId, 'gsd' as ModuleId]
-      .filter(id => availableModules.some(m => m.id === id));
+    selectedModules = initialModuleIds;
   } else {
     const result = await multiselect<ModuleId>({
-      message: 'Select modules to install (must-have pre-selected):',
+      message: 'Select modules to install (pre-selected based on your choices):',
       options: availableModules.map(m => ({
         value: m.id as ModuleId,
         label: m.label,
         hint: m.description,
       })),
-      initialValues: mustHaveIds,
+      initialValues: initialModuleIds,
       required: false,
     });
     if (isCancel(result)) { cancel('Setup cancelled.'); process.exit(0); }

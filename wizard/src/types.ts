@@ -45,7 +45,7 @@ export type ModuleId =
 export type ModuleRegistry = Record<ModuleId, ModuleDefinition>;
 
 export type AiMethodology = 'bmad' | 'gsd' | 'both';
-export type AgenticSystem = 'claude-code' | 'cursor' | 'vscode';
+export type AgenticSystem = 'claude-code' | 'cursor' | 'vscode' | 'antigravity';
 
 export interface UserSelections {
   aiMethodology: AiMethodology;
