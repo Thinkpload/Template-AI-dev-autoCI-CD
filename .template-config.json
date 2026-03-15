@@ -1,0 +1,33 @@
+{
+  "wizardVersion": "0.1.0",
+  "aiMethodology": "both",
+  "agenticSystem": "claude-code",
+  "modules": [
+    {
+      "id": "husky",
+      "installState": "failed"
+    },
+    {
+      "id": "eslint",
+      "installState": "failed"
+    },
+    {
+      "id": "vitest",
+      "installState": "failed"
+    },
+    {
+      "id": "tsconfig",
+      "installState": "failed"
+    },
+    {
+      "id": "gsd",
+      "installState": "installed"
+    },
+    {
+      "id": "bmad",
+      "installState": "failed"
+    }
+  ],
+  "createdAt": "2026-03-15T22:18:02.060Z",
+  "updatedAt": "2026-03-15T22:18:02.060Z"
+}
