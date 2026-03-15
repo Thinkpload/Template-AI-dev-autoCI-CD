@@ -43,3 +43,28 @@ export type ModuleId =
   | 'gsd';
 
 export type ModuleRegistry = Record<ModuleId, ModuleDefinition>;
+
+export type AiMethodology = 'bmad' | 'gsd' | 'both';
+export type AgenticSystem = 'claude-code' | 'cursor' | 'vscode';
+
+export interface UserSelections {
+  aiMethodology: AiMethodology;
+  agenticSystem: AgenticSystem;
+  selectedModules: ModuleId[];
+}
+
+export type InstallState = 'pending' | 'installed' | 'failed' | 'skipped';
+
+export interface ModuleInstallRecord {
+  id: string;
+  installState: InstallState;
+}
+
+export interface TemplateConfig {
+  wizardVersion: string;
+  aiMethodology: AiMethodology;
+  agenticSystem: AgenticSystem;
+  modules: ModuleInstallRecord[];
+  createdAt: string;
+  updatedAt: string;
+}
