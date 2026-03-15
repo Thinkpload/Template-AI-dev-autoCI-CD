@@ -24,10 +24,10 @@
 
 ### Code Quality
 
-- [ ] **QA-01**: Wizard installs and configures Husky v9 + lint-staged v15 — pre-commit hook runs linter on staged files
-- [ ] **QA-02**: Wizard installs and configures commitlint v19 — commit-msg hook enforces conventional commits format
-- [ ] **QA-03**: Wizard installs and configures Vitest v4 with coverage thresholds (80% statements/functions/lines, 70% branches)
-- [ ] **QA-04**: Vitest config is pre-wired to output `coverage/lcov.info` for SonarCloud consumption
+- [x] **QA-01**: Wizard installs and configures Husky v9 + lint-staged v15 — pre-commit hook runs linter on staged files
+- [x] **QA-02**: Wizard installs and configures commitlint v19 — commit-msg hook enforces conventional commits format
+- [x] **QA-03**: Wizard installs and configures Vitest v4 with coverage thresholds (80% statements/functions/lines, 70% branches)
+- [x] **QA-04**: Vitest config is pre-wired to output `coverage/lcov.info` for SonarCloud consumption
 - [x] **QA-05**: Template ships `.gitattributes` with `eol=lf` for all hook scripts (prevents Windows `\r\n` breaking Husky on Linux CI)
 
 ### CI/CD
@@ -98,10 +98,10 @@
 | AI-02 | Phase 2 | Complete |
 | AI-03 | Phase 2 | Complete |
 | AI-04 | Phase 1 | Complete |
-| QA-01 | Phase 3 | Pending |
-| QA-02 | Phase 3 | Pending |
-| QA-03 | Phase 3 | Pending |
-| QA-04 | Phase 3 | Pending |
+| QA-01 | Phase 3 | Complete |
+| QA-02 | Phase 3 | Complete |
+| QA-03 | Phase 3 | Complete |
+| QA-04 | Phase 3 | Complete |
 | QA-05 | Phase 1 | Complete |
 | CI-01 | Phase 4 | Pending |
 | CI-02 | Phase 4 | Pending |

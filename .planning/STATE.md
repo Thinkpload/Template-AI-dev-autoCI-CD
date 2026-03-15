@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Phase 3 context gathered
-last_updated: "2026-03-15T20:06:03.781Z"
+stopped_at: Completed 03-01-PLAN.md
+last_updated: "2026-03-15T20:36:08.638Z"
 last_activity: 2026-03-14 — Roadmap created, ready for Phase 1 planning
 progress:
   total_phases: 5
   completed_phases: 2
-  total_plans: 8
-  completed_plans: 8
+  total_plans: 11
+  completed_plans: 9
   percent: 0
 ---
 
@@ -57,6 +57,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 02-wizard-core P01 | 12 | 2 tasks | 6 files |
 | Phase 02-wizard-core P02 | 15 | 1 tasks | 4 files |
 | Phase 02-wizard-core P03 | 8 | 2 tasks | 1 files |
+| Phase 03-installer-pipeline P01 | 8 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -80,6 +81,7 @@ Recent decisions affecting current work:
 - [Phase 02-wizard-core]: validateConflicts exported at module level for direct unit testing without prompt flow
 - [Phase 02-wizard-core]: tsconfig module ESNext + rootDir . to support top-level await in tests and type-check both src/ and tests/
 - [Phase 02-wizard-core]: index.ts is now CLI entry point not library barrel; require('../package.json') for CJS-safe version; idempotency via installed-records filter-and-prepend
+- [Phase 03-installer-pipeline]: Installer test uses optional targetDir param for test isolation instead of mocking process.cwd()
 
 ### Pending Todos
 
@@ -91,6 +93,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-15T20:06:03.776Z
-Stopped at: Phase 3 context gathered
-Resume file: .planning/phases/03-installer-pipeline/03-CONTEXT.md
+Last session: 2026-03-15T20:36:04.120Z
+Stopped at: Completed 03-01-PLAN.md
+Resume file: None
