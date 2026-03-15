@@ -43,10 +43,10 @@ export const TYPESCRIPT_ESLINT_VERSION = '^8.23.0';
 // ─── Testing ────────────────────────────────────────────────────────────────
 
 /** vitest — unit/integration test runner v4 */
-export const VITEST_VERSION = '^4.0.0';
+export const VITEST_VERSION = '^4.1.0';
 
 /** @vitest/coverage-v8 — V8-based coverage for vitest */
-export const VITEST_COVERAGE_V8_VERSION = '^4.0.0';
+export const VITEST_COVERAGE_V8_VERSION = '^4.1.0';
 
 // ─── TypeScript ─────────────────────────────────────────────────────────────
 

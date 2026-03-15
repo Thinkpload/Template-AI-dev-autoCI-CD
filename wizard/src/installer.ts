@@ -54,6 +54,7 @@ function npmInstallDevDeps(packages: string[], cwd: string): void {
     cwd,
     stdio: 'pipe',
     encoding: 'utf-8',
+    shell: true,
   });
   if (result.error) throw result.error;
   if (result.status !== 0 && result.status !== null) {
