@@ -102,6 +102,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Foundation | 4/4 | Complete   | 2026-03-14 |
 | 2. Wizard Core | 4/4 | Complete   | 2026-03-15 |
-| 3. Installer Pipeline | 1/3 | In Progress|  |
+| 3. Installer Pipeline | 2/3 | In Progress|  |
 | 4. Auto-Bugfix Pipeline | 0/TBD | Not started | - |
 | 5. Packaging and Maintenance | 0/TBD | Not started | - |
