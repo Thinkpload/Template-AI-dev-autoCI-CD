@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Module registry, version pinning, template files, and line-ending guards (completed 2026-03-14)
 - [x] **Phase 2: Wizard Core** - Interactive CLI prompt sequence, UserSelections, idempotency, and AI methodology selection (completed 2026-03-15)
-- [ ] **Phase 3: Installer Pipeline** - File merger, JSON merge, batch npm install, and code quality module activation
+- [x] **Phase 3: Installer Pipeline** - File merger, JSON merge, batch npm install, and code quality module activation (completed 2026-03-15)
 - [ ] **Phase 4: Auto-Bugfix Pipeline** - CI audit step, GitHub Issue creation on failure, /fix-issue slash command, and loop guards
 - [ ] **Phase 5: Packaging and Maintenance** - npx package publishing, Dependabot, and template rot prevention
 
@@ -102,6 +102,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Foundation | 4/4 | Complete   | 2026-03-14 |
 | 2. Wizard Core | 4/4 | Complete   | 2026-03-15 |
-| 3. Installer Pipeline | 2/3 | In Progress|  |
+| 3. Installer Pipeline | 3/3 | Complete   | 2026-03-15 |
 | 4. Auto-Bugfix Pipeline | 0/TBD | Not started | - |
 | 5. Packaging and Maintenance | 0/TBD | Not started | - |
