@@ -8,6 +8,7 @@ const { version } = require('../package.json') as { version: string };
 
 import { runWizard } from './wizard.js';
 import { buildInitialConfig, readConfig, writeConfig } from './config.js';
+import { runInstaller } from './installer.js';
 
 const yesMode = process.argv.includes('--yes') || process.argv.includes('-y');
 
@@ -24,6 +25,7 @@ async function main(): Promise<void> {
   }
 
   writeConfig(config);
+  await runInstaller(selections, yesMode);
 }
 
 main().catch(err => {
