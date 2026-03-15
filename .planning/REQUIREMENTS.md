@@ -8,7 +8,7 @@
 ### Wizard Core
 
 - [x] **WIZ-01**: User can run the wizard via `./setup.sh` or `npx` and see an interactive prompt sequence
-- [ ] **WIZ-02**: Wizard presents module categories with checkboxes for multi-select and radio-selects for mutually exclusive choices (ORM, Auth)
+- [x] **WIZ-02**: Wizard presents module categories with checkboxes for multi-select and radio-selects for mutually exclusive choices (ORM, Auth)
 - [x] **WIZ-03**: Wizard writes `.template-config.json` with selected modules and install state after completion
 - [x] **WIZ-04**: Re-running the wizard skips already-installed modules (idempotency guard via `.template-config.json`)
 - [x] **WIZ-05**: Wizard detects conflicting module selections (e.g., Prisma + Drizzle simultaneously) and shows an error before any installation starts
@@ -88,7 +88,7 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | WIZ-01 | Phase 2 | Complete |
-| WIZ-02 | Phase 2 | Pending |
+| WIZ-02 | Phase 2 | Complete |
 | WIZ-03 | Phase 2 | Complete |
 | WIZ-04 | Phase 2 | Complete |
 | WIZ-05 | Phase 2 | Complete |
