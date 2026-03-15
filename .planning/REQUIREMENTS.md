@@ -7,19 +7,19 @@
 
 ### Wizard Core
 
-- [ ] **WIZ-01**: User can run the wizard via `./setup.sh` or `npx` and see an interactive prompt sequence
+- [x] **WIZ-01**: User can run the wizard via `./setup.sh` or `npx` and see an interactive prompt sequence
 - [ ] **WIZ-02**: Wizard presents module categories with checkboxes for multi-select and radio-selects for mutually exclusive choices (ORM, Auth)
-- [ ] **WIZ-03**: Wizard writes `.template-config.json` with selected modules and install state after completion
-- [ ] **WIZ-04**: Re-running the wizard skips already-installed modules (idempotency guard via `.template-config.json`)
-- [ ] **WIZ-05**: Wizard detects conflicting module selections (e.g., Prisma + Drizzle simultaneously) and shows an error before any installation starts
-- [ ] **WIZ-06**: Wizard supports `--yes` / `--skip` flag for non-interactive/CI mode using sensible defaults
-- [ ] **WIZ-07**: Wizard gracefully handles install failures — logs error, continues with remaining modules, summarizes failures at end
+- [x] **WIZ-03**: Wizard writes `.template-config.json` with selected modules and install state after completion
+- [x] **WIZ-04**: Re-running the wizard skips already-installed modules (idempotency guard via `.template-config.json`)
+- [x] **WIZ-05**: Wizard detects conflicting module selections (e.g., Prisma + Drizzle simultaneously) and shows an error before any installation starts
+- [x] **WIZ-06**: Wizard supports `--yes` / `--skip` flag for non-interactive/CI mode using sensible defaults
+- [x] **WIZ-07**: Wizard gracefully handles install failures — logs error, continues with remaining modules, summarizes failures at end
 
 ### AI Methodology
 
-- [ ] **AI-01**: User can select BMAD methodology — wizard installs BMAD v6 via npm from official public repo (`@bmad-method/bmad-agent`)
-- [ ] **AI-02**: User can select GSD workflow engine — wizard confirms GSD is active (already in repo) or updates to latest pinned version
-- [ ] **AI-03**: User can select both BMAD and GSD — both are installed and configured without conflicts
+- [x] **AI-01**: User can select BMAD methodology — wizard installs BMAD v6 via npm from official public repo (`@bmad-method/bmad-agent`)
+- [x] **AI-02**: User can select GSD workflow engine — wizard confirms GSD is active (already in repo) or updates to latest pinned version
+- [x] **AI-03**: User can select both BMAD and GSD — both are installed and configured without conflicts
 - [x] **AI-04**: Template pins BMAD and GSD to specific versions with a documented upgrade path (prevents silent version drift breaking agent discovery)
 
 ### Code Quality
@@ -87,16 +87,16 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| WIZ-01 | Phase 2 | Pending |
+| WIZ-01 | Phase 2 | Complete |
 | WIZ-02 | Phase 2 | Pending |
-| WIZ-03 | Phase 2 | Pending |
-| WIZ-04 | Phase 2 | Pending |
-| WIZ-05 | Phase 2 | Pending |
-| WIZ-06 | Phase 2 | Pending |
-| WIZ-07 | Phase 2 | Pending |
-| AI-01 | Phase 2 | Pending |
-| AI-02 | Phase 2 | Pending |
-| AI-03 | Phase 2 | Pending |
+| WIZ-03 | Phase 2 | Complete |
+| WIZ-04 | Phase 2 | Complete |
+| WIZ-05 | Phase 2 | Complete |
+| WIZ-06 | Phase 2 | Complete |
+| WIZ-07 | Phase 2 | Complete |
+| AI-01 | Phase 2 | Complete |
+| AI-02 | Phase 2 | Complete |
+| AI-03 | Phase 2 | Complete |
 | AI-04 | Phase 1 | Complete |
 | QA-01 | Phase 3 | Pending |
 | QA-02 | Phase 3 | Pending |

@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 01-foundation/01-04-PLAN.md
-last_updated: "2026-03-14T21:42:54.738Z"
+stopped_at: Completed 02-wizard-core/02-01-PLAN.md
+last_updated: "2026-03-15T00:11:06.018Z"
 last_activity: 2026-03-14 — Roadmap created, ready for Phase 1 planning
 progress:
   total_phases: 5
   completed_phases: 1
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 8
+  completed_plans: 5
   percent: 0
 ---
 
@@ -54,6 +54,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01-foundation P02 | 3 | 2 tasks | 4 files |
 | Phase 01-foundation P03 | 8 | 2 tasks | 8 files |
 | Phase 01-foundation P04 | 12 | 2 tasks | 4 files |
+| Phase 02-wizard-core P01 | 12 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -72,6 +73,8 @@ Recent decisions affecting current work:
 - [Phase 01-foundation]: Husky v9 hooks are plain script files (no shebang). #!/bin/sh would break Husky v9.
 - [Phase 01-foundation]: Separate version-check.yml workflow (not embedded in ci.yml) keeps schedule trigger and build job concerns cleanly separated
 - [Phase 01-foundation]: grep -r @latest wizard/src/ 2>/dev/null in CI — 2>/dev/null future-proofs check for repos before wizard has been run
+- [Phase 02-wizard-core]: config.ts uses process.cwd() for CONFIG_PATH — ensures .template-config.json lands in user project dir, not wizard package dir
+- [Phase 02-wizard-core]: setup.sh replaced legacy bash wizard with minimal passthrough to wizard/dist/index.cjs per WIZ-01
 
 ### Pending Todos
 
@@ -83,6 +86,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-14T21:42:09.430Z
-Stopped at: Completed 01-foundation/01-04-PLAN.md
+Last session: 2026-03-15T00:11:06.013Z
+Stopped at: Completed 02-wizard-core/02-01-PLAN.md
 Resume file: None
