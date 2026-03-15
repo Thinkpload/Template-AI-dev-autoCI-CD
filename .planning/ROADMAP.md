@@ -13,7 +13,7 @@ Build a production-ready interactive CLI wizard distributed as an `npx` package 
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Module registry, version pinning, template files, and line-ending guards (completed 2026-03-14)
-- [ ] **Phase 2: Wizard Core** - Interactive CLI prompt sequence, UserSelections, idempotency, and AI methodology selection
+- [x] **Phase 2: Wizard Core** - Interactive CLI prompt sequence, UserSelections, idempotency, and AI methodology selection (completed 2026-03-15)
 - [ ] **Phase 3: Installer Pipeline** - File merger, JSON merge, batch npm install, and code quality module activation
 - [ ] **Phase 4: Auto-Bugfix Pipeline** - CI audit step, GitHub Issue creation on failure, /fix-issue slash command, and loop guards
 - [ ] **Phase 5: Packaging and Maintenance** - npx package publishing, Dependabot, and template rot prevention
@@ -32,10 +32,10 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 4 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — .gitattributes, wizard package scaffold, and Wave 0 test infrastructure
-- [ ] 01-02-PLAN.md — types.ts, dependency-versions.ts, and MODULE_REGISTRY (turns tests green)
-- [ ] 01-03-PLAN.md — template files for all 6 modules (eslint, husky, vitest, tsconfig, bmad, gsd)
-- [ ] 01-04-PLAN.md — CI @latest grep check and weekly version-drift workflow
+- [x] 01-01-PLAN.md — .gitattributes, wizard package scaffold, and Wave 0 test infrastructure
+- [x] 01-02-PLAN.md — types.ts, dependency-versions.ts, and MODULE_REGISTRY (turns tests green)
+- [x] 01-03-PLAN.md — template files for all 6 modules (eslint, husky, vitest, tsconfig, bmad, gsd)
+- [x] 01-04-PLAN.md — CI @latest grep check and weekly version-drift workflow
 
 ### Phase 2: Wizard Core
 **Goal**: Running `./setup.sh` or `npx create-ai-template` presents a complete interactive prompt sequence, collects all user selections into a `UserSelections` object, persists state to `.template-config.json`, and is idempotent on re-runs
@@ -50,10 +50,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Wave 0: @clack/prompts install, type extensions, config.ts, test scaffolds, setup.sh
-- [ ] 02-02-PLAN.md — wizard.ts: runWizard() prompt sequence, idempotency guard, conflict validation (turns tests GREEN)
-- [ ] 02-03-PLAN.md — index.ts wiring: --yes flag, writeConfig, idempotency merge, build and smoke test
-- [ ] 02-04-PLAN.md — Human verify: interactive terminal UX, CTRL+C, --yes end-to-end
+- [x] 02-01-PLAN.md — Wave 0: @clack/prompts install, type extensions, config.ts, test scaffolds, setup.sh
+- [x] 02-02-PLAN.md — wizard.ts: runWizard() prompt sequence, idempotency guard, conflict validation (turns tests GREEN)
+- [x] 02-03-PLAN.md — index.ts wiring: --yes flag, writeConfig, idempotency merge, build and smoke test
+- [x] 02-04-PLAN.md — Human verify: interactive terminal UX, CTRL+C, --yes end-to-end
 
 ### Phase 3: Installer Pipeline
 **Goal**: Every selected code quality module is correctly installed into the target project — Husky pre-commit hook fires on staged files, commitlint enforces conventional commits, Vitest runs and reports coverage, and SonarCloud receives the coverage report
@@ -64,7 +64,12 @@ Plans:
   2. After wizard selects commitlint, a commit with a message that does not follow conventional commits format (e.g., `"fixed stuff"`) is rejected by the commit-msg hook with a descriptive error
   3. After wizard selects Vitest, `npm test` runs and produces a `coverage/lcov.info` file — the CI pipeline uploads this file to SonarCloud without any manual configuration
   4. Coverage thresholds are enforced: `npm test` fails if statements, functions, or lines fall below 80%, or branches below 70%
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — Wave 0: Husky hook templates (pre-commit, commit-msg) + installer test scaffold (RED state)
+- [ ] 03-02-PLAN.md — installer.ts: runInstaller, mergePackageJson, copyTemplateDir, writeHookFile (turns tests GREEN)
+- [ ] 03-03-PLAN.md — Wire runInstaller into index.ts + human-verify QA-01 through QA-04
 
 ### Phase 4: Auto-Bugfix Pipeline
 **Goal**: A CI failure automatically opens a structured GitHub Issue, a developer can run `/fix-issue <number>` in Claude Code to trigger an AI fix attempt, the workflow cannot loop infinitely, and it stops after 3 failed attempts
@@ -96,7 +101,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 4/4 | Complete   | 2026-03-14 |
-| 2. Wizard Core | 3/4 | In Progress|  |
-| 3. Installer Pipeline | 0/TBD | Not started | - |
+| 2. Wizard Core | 4/4 | Complete   | 2026-03-15 |
+| 3. Installer Pipeline | 0/3 | Not started | - |
 | 4. Auto-Bugfix Pipeline | 0/TBD | Not started | - |
 | 5. Packaging and Maintenance | 0/TBD | Not started | - |
