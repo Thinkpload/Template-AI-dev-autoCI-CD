@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 04-02-PLAN.md — Security Audit, structured issue body, actor guard added to ci.yml
-last_updated: "2026-03-16T20:53:35.834Z"
+stopped_at: Completed 04-03-PLAN.md — /fix-issue slash command, CI-03 CI-04 CI-05 satisfied
+last_updated: "2026-03-16T20:57:19.246Z"
 last_activity: 2026-03-14 — Roadmap created, ready for Phase 1 planning
 progress:
   total_phases: 5
   completed_phases: 3
   total_plans: 15
-  completed_plans: 13
+  completed_plans: 14
   percent: 0
 ---
 
@@ -62,6 +62,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 03-installer-pipeline P03 | 5 | 1 tasks | 1 files |
 | Phase 04-auto-bugfix-pipeline P01 | 5 | 1 tasks | 0 files |
 | Phase 04-auto-bugfix-pipeline P02 | 2 | 2 tasks | 1 files |
+| Phase 04-auto-bugfix-pipeline P03 | 2 | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -93,6 +94,9 @@ Recent decisions affecting current work:
 - [Phase 04-auto-bugfix-pipeline]: needs-human uses distinct red (#e11d48) to stand out in GitHub issue lists
 - [Phase 04-auto-bugfix-pipeline]: Actor guard placed at job level (not step level) so bot-triggered events skip all steps including checkout
 - [Phase 04-auto-bugfix-pipeline]: CI failure issue title uses machine-parseable format 'CI Failed: job on branch (#run)' — emoji prefix removed
+- [Phase 04-auto-bugfix-pipeline]: !gh issue view $ARGUMENTS at prompt-load injects full issue JSON — zero copy-paste slash command fetch (CI-03)
+- [Phase 04-auto-bugfix-pipeline]: [skip ci] suffix on fix commit prevents push-triggered CI re-run — satisfies CI-04 loop prevention
+- [Phase 04-auto-bugfix-pipeline]: COUNT >= 3 guard applies needs-human label and stops before PR — satisfies CI-05 exhaustion guard
 
 ### Pending Todos
 
@@ -104,6 +108,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-16T20:53:35.828Z
-Stopped at: Completed 04-02-PLAN.md — Security Audit, structured issue body, actor guard added to ci.yml
+Last session: 2026-03-16T20:57:19.240Z
+Stopped at: Completed 04-03-PLAN.md — /fix-issue slash command, CI-03 CI-04 CI-05 satisfied
 Resume file: None
