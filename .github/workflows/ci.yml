@@ -10,6 +10,7 @@ jobs:
   build:
     name: Lint · Test · Sonar · Build
     runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]'
     permissions:
       contents: read
       issues: write
@@ -30,6 +31,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Security Audit
+        run: npm audit --audit-level=high > audit.log 2>&1 || (cat audit.log && exit 1)
 
       - name: Check no @latest in wizard source
         run: |
