@@ -33,10 +33,10 @@
 ### CI/CD
 
 - [ ] **CI-01**: CI pipeline includes `npm audit --audit-level=high` step — build fails on high/critical vulnerabilities
-- [ ] **CI-02**: CI failure triggers automatic GitHub Issue creation with structured context: failing job name, error log excerpt, commit SHA, branch name
+- [x] **CI-02**: CI failure triggers automatic GitHub Issue creation with structured context: failing job name, error log excerpt, commit SHA, branch name
 - [ ] **CI-03**: User can run `/fix-issue <issue-number>` slash command in Claude Code — AI agent reads the issue, applies a fix, and opens a PR
 - [ ] **CI-04**: Auto-bugfix workflow uses `GITHUB_TOKEN` (not PAT) + actor filter + `[skip ci]` on fix commits to prevent infinite CI loop
-- [ ] **CI-05**: Auto-bugfix workflow tracks fix-attempt count per issue — stops after 3 failed attempts and adds a `needs-human` label
+- [x] **CI-05**: Auto-bugfix workflow tracks fix-attempt count per issue — stops after 3 failed attempts and adds a `needs-human` label
 
 ### Security & Dependencies
 
@@ -104,10 +104,10 @@
 | QA-04 | Phase 3 | Complete |
 | QA-05 | Phase 1 | Complete |
 | CI-01 | Phase 4 | Pending |
-| CI-02 | Phase 4 | Pending |
+| CI-02 | Phase 4 | Complete |
 | CI-03 | Phase 4 | Pending |
 | CI-04 | Phase 4 | Pending |
-| CI-05 | Phase 4 | Pending |
+| CI-05 | Phase 4 | Complete |
 | SEC-01 | Phase 5 | Pending |
 
 **Coverage:**
