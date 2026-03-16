@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 04-01-PLAN.md — GitHub labels pre-created, Wave 1 unblocked
-last_updated: "2026-03-16T20:49:55.739Z"
+stopped_at: Completed 04-02-PLAN.md — Security Audit, structured issue body, actor guard added to ci.yml
+last_updated: "2026-03-16T20:53:35.834Z"
 last_activity: 2026-03-14 — Roadmap created, ready for Phase 1 planning
 progress:
   total_phases: 5
   completed_phases: 3
   total_plans: 15
-  completed_plans: 12
+  completed_plans: 13
   percent: 0
 ---
 
@@ -61,6 +61,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 03-installer-pipeline P02 | 8 | 2 tasks | 3 files |
 | Phase 03-installer-pipeline P03 | 5 | 1 tasks | 1 files |
 | Phase 04-auto-bugfix-pipeline P01 | 5 | 1 tasks | 0 files |
+| Phase 04-auto-bugfix-pipeline P02 | 2 | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -90,6 +91,8 @@ Recent decisions affecting current work:
 - [Phase 03-installer-pipeline]: index.ts calls runInstaller(selections, yesMode) immediately after writeConfig — single-command UX
 - [Phase 04-auto-bugfix-pipeline]: Labels created with --force flag so plan is idempotent and safe to re-run
 - [Phase 04-auto-bugfix-pipeline]: needs-human uses distinct red (#e11d48) to stand out in GitHub issue lists
+- [Phase 04-auto-bugfix-pipeline]: Actor guard placed at job level (not step level) so bot-triggered events skip all steps including checkout
+- [Phase 04-auto-bugfix-pipeline]: CI failure issue title uses machine-parseable format 'CI Failed: job on branch (#run)' — emoji prefix removed
 
 ### Pending Todos
 
@@ -101,6 +104,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-16T20:49:55.731Z
-Stopped at: Completed 04-01-PLAN.md — GitHub labels pre-created, Wave 1 unblocked
+Last session: 2026-03-16T20:53:35.828Z
+Stopped at: Completed 04-02-PLAN.md — Security Audit, structured issue body, actor guard added to ci.yml
 Resume file: None
