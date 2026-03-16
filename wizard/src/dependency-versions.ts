@@ -26,19 +26,19 @@ export const GSD_VERSION = '2.0.0';
 export const HUSKY_VERSION = '^9.1.7';
 
 /** lint-staged — run linters on staged files only */
-export const LINT_STAGED_VERSION = '^15.2.10';
+export const LINT_STAGED_VERSION = '16.4.0';
 
 /** @commitlint/cli — validate commit messages */
-export const COMMITLINT_CLI_VERSION = '^19.6.1';
+export const COMMITLINT_CLI_VERSION = '20.5.0';
 
 /** @commitlint/config-conventional — Conventional Commits 1.0 ruleset */
-export const COMMITLINT_CONVENTIONAL_VERSION = '^19.6.0';
+export const COMMITLINT_CONVENTIONAL_VERSION = '20.5.0';
 
 /** eslint — static analysis (flat config, v9+) */
-export const ESLINT_VERSION = '^9.19.0';
+export const ESLINT_VERSION = '10.0.3';
 
 /** typescript-eslint — TypeScript-aware ESLint rules */
-export const TYPESCRIPT_ESLINT_VERSION = '^8.23.0';
+export const TYPESCRIPT_ESLINT_VERSION = '8.57.0';
 
 // ─── Testing ────────────────────────────────────────────────────────────────
 
@@ -51,4 +51,4 @@ export const VITEST_COVERAGE_V8_VERSION = '^4.1.0';
 // ─── TypeScript ─────────────────────────────────────────────────────────────
 
 /** typescript — TypeScript compiler */
-export const TYPESCRIPT_VERSION = '^5.7.3';
+export const TYPESCRIPT_VERSION = '5.9.3';
