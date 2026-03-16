@@ -63,8 +63,20 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "CI Failed on branch \`${{ github.ref_name }}\` — run [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})." > issue_body.md
-          echo "" >> issue_body.md
+          {
+            echo "**Job:** \`${{ github.job }}\`"
+            echo "**Branch:** \`${{ github.ref_name }}\`"
+            echo "**Commit:** \`${{ github.sha }}\`"
+            echo "**Run:** [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+            echo ""
+          } > issue_body.md
+          if [ -f audit.log ]; then
+            echo "**Audit Logs:**" >> issue_body.md
+            echo '```text' >> issue_body.md
+            tail -n 50 audit.log >> issue_body.md
+            echo '```' >> issue_body.md
+            echo "" >> issue_body.md
+          fi
           if [ -f lint.log ]; then
             echo "**Lint Logs:**" >> issue_body.md
             echo '```text' >> issue_body.md
@@ -87,6 +99,6 @@ jobs:
             echo "" >> issue_body.md
           fi
           gh issue create \
-            --title "🚨 CI Failed: ${{ github.workflow }} (#${{ github.run_number }})" \
+            --title "CI Failed: ${{ github.job }} on ${{ github.ref_name }} (#${{ github.run_number }})" \
             --body-file issue_body.md \
-            --label "bug" || true
+            --label "bug,ci-failure" || true
