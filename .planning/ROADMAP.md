@@ -81,7 +81,13 @@ Plans:
   3. A developer running `/fix-issue 42` inside Claude Code triggers the GSD slash command handler, which reads Issue #42, applies a code fix, and opens a PR — without requiring any manual copy-paste of issue content
   4. The auto-bugfix workflow uses `GITHUB_TOKEN` (not a PAT) and includes an `if: github.actor != 'github-actions[bot]'` guard — pushing a fix commit does not re-trigger the workflow
   5. After 3 consecutive failed fix attempts on the same issue, the workflow stops creating new fix PRs and adds a `needs-human` label to the issue
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [ ] 04-01-PLAN.md — Wave 0: Create GitHub repository labels (bug, ci-failure, needs-human)
+- [ ] 04-02-PLAN.md — ci.yml: Security Audit step (CI-01), structured issue body (CI-02), actor guard (CI-04)
+- [ ] 04-03-PLAN.md — .claude/commands/fix-issue.md: /fix-issue slash command with attempt counter and needs-human guard
+- [ ] 04-04-PLAN.md — Human verify: end-to-end UAT for CI-01 through CI-05
 
 ### Phase 5: Packaging and Maintenance
 **Goal**: The wizard is installable via `npx` on macOS, Linux, and Windows (WSL), ships as a correctly-built CJS package, and the template repo has Dependabot configured to prevent dependency rot
@@ -103,5 +109,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Foundation | 4/4 | Complete   | 2026-03-14 |
 | 2. Wizard Core | 4/4 | Complete   | 2026-03-15 |
 | 3. Installer Pipeline | 3/3 | Complete   | 2026-03-15 |
-| 4. Auto-Bugfix Pipeline | 0/TBD | Not started | - |
+| 4. Auto-Bugfix Pipeline | 0/4 | Not started | - |
 | 5. Packaging and Maintenance | 0/TBD | Not started | - |
