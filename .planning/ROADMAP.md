@@ -97,7 +97,11 @@ Plans:
   1. Running `npx create-ai-template` on macOS, Linux, and Windows (WSL2) completes the full wizard flow without platform-specific errors — verified by a CI matrix job targeting `ubuntu-latest`, `macos-latest`, and `windows-latest`
   2. `.github/dependabot.yml` is committed to the template repo — Dependabot opens weekly PRs grouped by minor+patch updates, and patch-only bumps are configured for automerge
   3. The wizard npm package builds to CommonJS via `tsup` with a correct `bin` field — `npx create-ai-template` resolves and executes without `ERR_REQUIRE_ESM` errors
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 05-01-PLAN.md — Dependabot config + automerge workflow (SEC-01) + Node version guard + prepublishOnly
+- [ ] 05-02-PLAN.md — publish.yml with cross-platform smoke-test matrix + human verify
 
 ## Progress
 
@@ -110,4 +114,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Wizard Core | 4/4 | Complete   | 2026-03-15 |
 | 3. Installer Pipeline | 3/3 | Complete   | 2026-03-15 |
 | 4. Auto-Bugfix Pipeline | 3/4 | In Progress|  |
-| 5. Packaging and Maintenance | 0/TBD | Not started | - |
+| 5. Packaging and Maintenance | 0/2 | Not started | - |
