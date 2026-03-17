@@ -1,0 +1,32 @@
+# Dependabot version update configuration — SEC-01
+# Weekly PRs for npm (wizard/) and GitHub Actions, grouped by minor+patch.
+# Major updates appear as individual PRs (default behavior when not grouped).
+version: 2
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/wizard'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+    groups:
+      npm-minor-patch:
+        applies-to: version-updates
+        update-types:
+          - 'minor'
+          - 'patch'
+    labels:
+      - 'dependencies'
+
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+    groups:
+      actions-minor-patch:
+        applies-to: version-updates
+        update-types:
+          - 'minor'
+          - 'patch'
+    labels:
+      - 'dependencies'
