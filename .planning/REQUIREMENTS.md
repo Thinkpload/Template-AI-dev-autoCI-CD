@@ -40,7 +40,7 @@
 
 ### Security & Dependencies
 
-- [ ] **SEC-01**: Template ships `.github/dependabot.yml` — weekly dependency update PRs grouped by minor+patch, automerge patch bumps
+- [x] **SEC-01**: Template ships `.github/dependabot.yml` — weekly dependency update PRs grouped by minor+patch, automerge patch bumps
 
 ## v2 Requirements
 
@@ -108,7 +108,7 @@
 | CI-03 | Phase 4 | Complete |
 | CI-04 | Phase 4 | Complete |
 | CI-05 | Phase 4 | Complete |
-| SEC-01 | Phase 5 | Pending |
+| SEC-01 | Phase 5 | Complete |
 
 **Coverage:**
 - v1 requirements: 22 total
