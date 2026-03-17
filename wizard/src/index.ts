@@ -1,3 +1,14 @@
+// Node version guard — must be first executable code (before any require/import)
+// tsup CJS output preserves source order, so this runs before all require() calls
+const _nodeVer = process.versions.node;
+const _nodeMajor = parseInt(_nodeVer.split('.')[0], 10);
+if (_nodeMajor < 20) {
+  process.stderr.write(
+    `Error: create-ai-template requires Node.js 20 or higher. You are running v${_nodeVer}. Please upgrade: https://nodejs.org\n`
+  );
+  process.exit(1);
+}
+
 /**
  * create-ai-template — CLI entry point
  * Phase 2: wires runWizard + writeConfig + --yes flag

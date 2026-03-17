@@ -9,7 +9,8 @@
   "scripts": {
     "build": "tsup",
     "test": "vitest run --reporter=verbose",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "prepublishOnly": "npm test && npm run build"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",
