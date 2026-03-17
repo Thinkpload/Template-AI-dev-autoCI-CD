@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 05-01-PLAN.md
-last_updated: "2026-03-17T08:55:06.691Z"
+stopped_at: "Completed 05-02-PLAN.md (checkpoint: awaiting human review)"
+last_updated: "2026-03-17T08:58:25.612Z"
 last_activity: 2026-03-14 — Roadmap created, ready for Phase 1 planning
 progress:
   total_phases: 5
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 17
-  completed_plans: 15
+  completed_plans: 16
   percent: 0
 ---
 
@@ -64,6 +64,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 04-auto-bugfix-pipeline P02 | 2 | 2 tasks | 1 files |
 | Phase 04-auto-bugfix-pipeline P03 | 2 | 1 tasks | 1 files |
 | Phase 05-packaging-and-maintenance P01 | 10 | 2 tasks | 4 files |
+| Phase 05 P02 | 5 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -101,6 +102,8 @@ Recent decisions affecting current work:
 - [Phase 05-packaging-and-maintenance]: Node version guard placed before all require/import calls in wizard/src/index.ts
 - [Phase 05-packaging-and-maintenance]: dependabot.yml uses directory '/wizard' because repo root has no package.json
 - [Phase 05-packaging-and-maintenance]: Automerge workflow uses pull_request event (not pull_request_target) for elevated Dependabot GITHUB_TOKEN
+- [Phase 05]: publish.yml is a separate file from ci.yml — same separation pattern as version-check.yml
+- [Phase 05]: NPM_TOKEN documented in CONTRIBUTING.md as granular access token (locked decision from CONTEXT.md)
 
 ### Pending Todos
 
@@ -112,6 +115,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-17T08:55:06.684Z
-Stopped at: Completed 05-01-PLAN.md
+Last session: 2026-03-17T08:58:25.606Z
+Stopped at: Completed 05-02-PLAN.md (checkpoint: awaiting human review)
 Resume file: None
