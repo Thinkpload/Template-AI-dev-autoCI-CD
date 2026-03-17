@@ -1,0 +1,111 @@
+# publish.yml — Tag-triggered npm publish with cross-platform smoke test gate
+#
+# Trigger: git tag v1.0.0 && git push --tags
+#
+# Jobs:
+#   smoke-test: Packs wizard/ as a local .tgz and runs npx --yes <tarball> --yes
+#               on ubuntu-latest, macos-latest, and windows-latest.
+#               Verifies .template-config.json is created (WIZ-03).
+#               fail-fast: false — all platforms report results even if one fails.
+#   publish:    Runs only if smoke-test passes. Installs, tests, builds, then
+#               publishes to npm via NODE_AUTH_TOKEN.
+#
+# WSL2 note: ubuntu-latest covers the Linux Node.js binary that WSL2 runs.
+#            No dedicated WSL2 runner is needed — Linux coverage is equivalent.
+#
+# OIDC upgrade path: npm trusted publishing (OIDC) is GA as of July 2025 and
+# eliminates the need for NPM_TOKEN entirely (id-token: write + npmjs.com
+# trusted publisher config). Implement when ready to remove the long-lived token.
+
+name: Publish to npm
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  smoke-test:
+    name: Smoke test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          # cache-dependency-path required: defaults.run.working-directory does not
+          # apply to uses: steps, so the lock file path must be explicit.
+          cache: 'npm'
+          cache-dependency-path: wizard/package-lock.json
+
+      - name: Build wizard package
+        working-directory: wizard
+        run: |
+          npm ci
+          npm run build
+          npm pack
+
+      - name: Run smoke test (Linux / macOS)
+        if: runner.os != 'Windows'
+        run: |
+          TARBALL=$(ls wizard/create-ai-template-*.tgz)
+          mkdir -p /tmp/smoke-test
+          cd /tmp/smoke-test
+          npx --yes "$OLDPWD/$TARBALL" --yes
+          test -f .template-config.json && echo "smoke-test PASSED on ${{ matrix.os }}"
+
+      - name: Run smoke test (Windows)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          TARBALL=$(ls wizard/create-ai-template-*.tgz)
+          mkdir -p "$RUNNER_TEMP/smoke-test"
+          cd "$RUNNER_TEMP/smoke-test"
+          npx --yes "$GITHUB_WORKSPACE/$TARBALL" --yes
+          test -f .template-config.json && echo "smoke-test PASSED on ${{ matrix.os }}"
+
+  publish:
+    name: Build · Test · Publish
+    runs-on: ubuntu-latest
+    needs: smoke-test
+    defaults:
+      run:
+        working-directory: wizard
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+          # registry-url writes .npmrc auth config consumed by NODE_AUTH_TOKEN below.
+          # cache-dependency-path required: working-directory default does not apply
+          # to uses: steps.
+          cache: 'npm'
+          cache-dependency-path: wizard/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Publish to npm
+        # Note: unscoped packages are public by default — no --access public needed.
+        # Add --access public only if package name ever becomes scoped (@org/...).
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
