@@ -1,4 +1,7 @@
 {
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
   "hooks": {
     "SessionStart": [
       {
@@ -16,6 +19,36 @@
           {
             "type": "command",
             "command": "node .claude/hooks/gsd-context-monitor.js"
+          }
+        ]
+      }
+    ],
+    "TeammateIdle": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/teammate-idle-gate.js"
+          }
+        ]
+      }
+    ],
+    "TaskCompleted": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/task-completed-gate.js"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/autopilot-continue.js"
           }
         ]
       }
