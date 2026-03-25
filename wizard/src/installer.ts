@@ -205,6 +205,7 @@ export async function runInstaller(
   };
 
   const results: Array<{ id: string; status: 'installed' | 'failed' }> = [];
+  const errors: Array<{ label: string; msg: string; devDeps: string[] }> = [];
 
   for (const moduleId of selections.selectedModules) {
     const record = config.modules.find(m => m.id === moduleId);
@@ -213,8 +214,24 @@ export async function runInstaller(
     const mod = MODULE_REGISTRY[moduleId as keyof typeof MODULE_REGISTRY];
     if (!mod) continue;
 
+    // Extract major version from first devDep for display (e.g. "husky@^9.1.7" → "v9")
+    // Uses .at(-1) to handle scoped packages (e.g. "@scope/pkg@^1.0.0" → last segment)
+    const versionDisplay = mod.devDeps.length > 0
+      ? (() => {
+          const segments = mod.devDeps[0]?.split('@') ?? [];
+          // For scoped packages "@scope/pkg@^1.0.0", split('@') = ['', 'scope/pkg', '^1.0.0']
+          // For plain "husky@^9.1.7", split('@') = ['husky', '^9.1.7']
+          // Take last segment only if it looks like a version (starts with digit or semver range char)
+          const lastSegment = segments.at(-1) ?? '';
+          const looksLikeVersion = /^[\^~>=<\d]/.test(lastSegment) && /\d/.test(lastSegment);
+          const raw = looksLikeVersion ? lastSegment : '';
+          const major = raw.replace(/[^0-9]/g, '').charAt(0);
+          return major ? `v${major}` : '';
+        })()
+      : '';
+
     const s = spinner();
-    s.start(`Installing ${mod.label}...`);
+    s.start(`Installing ${mod.label}${versionDisplay ? ` ${versionDisplay}` : ''}...`);
 
     try {
       // 1. npm install devDeps
@@ -245,16 +262,28 @@ export async function runInstaller(
       saveConfig(config);
       s.stop(`${mod.label} failed`);
       const msg = err instanceof Error ? err.message : String(err);
-      log.error(`${mod.label}: ${msg}`);
-      log.warn(`Run: npm install ${mod.devDeps.join(' ')} manually to retry`);
+      // Collect errors — display consolidated after all modules finish (fail-late pattern)
+      errors.push({ label: mod.label, msg, devDeps: mod.devDeps });
       results.push({ id: moduleId, status: 'failed' });
     }
   }
 
+  // Consolidated error display — shown after all modules finish (never mid-flow)
+  // errors[] and results[failed] are always in sync: both pushed together in the catch block
+  if (errors.length > 0) {
+    log.error('The following modules failed to install:');
+    for (const { label, msg, devDeps } of errors) {
+      log.error(`  ${label}: ${msg}`);
+      if (devDeps.length > 0) {
+        log.warn(`  Fix: npm install --save-dev ${devDeps.join(' ')}`);
+      }
+    }
+  }
+
   const installed = results.filter(r => r.status === 'installed').length;
-  const failed = results.filter(r => r.status === 'failed').length;
+  const failed = errors.length; // use errors[] as authoritative source to stay in sync with display
   if (failed > 0) {
-    outro(`Installed: ${installed}, Failed: ${failed} (see above for details)`);
+    outro(`Installed: ${installed}, Failed: ${failed} — see above for details and fix commands`);
   } else {
     outro(`Setup complete! ${installed} module${installed !== 1 ? 's' : ''} installed.`);
   }
