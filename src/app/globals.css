@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-sans: var(--font-inter, ui-sans-serif, system-ui, sans-serif);
+}
+
+/*
+  Direction D — Bold & Purple (dark mode default)
+  shadcn/ui CSS variable overrides — UX-DR13
+  No hardcoded hex values — all via CSS variables
+*/
+:root {
+  /* Dark mode is the default */
+  --background: 240 10% 6%;
+  --foreground: 0 0% 98%;
+  --card: 240 10% 8%;
+  --card-foreground: 0 0% 98%;
+  --popover: 240 10% 8%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 271 81% 56%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 240 5% 16%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 5% 16%;
+  --muted-foreground: 240 5% 65%;
+  --accent: 271 81% 56%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 5% 16%;
+  --input: 240 5% 16%;
+  --ring: 271 81% 56%;
+  --radius: 0.5rem;
+
+  /* Purple glow for landing page hero */
+  --glow-primary: 271 81% 56%;
+  --glow-secondary: 245 100% 63%;
+}
+
+.light {
+  --background: 0 0% 100%;
+  --foreground: 240 10% 4%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 4%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 4%;
+  --primary: 271 81% 50%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 240 5% 96%;
+  --secondary-foreground: 240 6% 10%;
+  --muted: 240 5% 96%;
+  --muted-foreground: 240 4% 46%;
+  --accent: 240 5% 96%;
+  --accent-foreground: 240 6% 10%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 6% 90%;
+  --input: 240 6% 90%;
+  --ring: 271 81% 50%;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-sans);
+}

@@ -1,7 +1,11 @@
-# SaaS Project Template — BMAD + CI/CD
+# Template BMAD + auto CI/CD
 
-A GitHub Template Repository for new SaaS projects.
-Ships with **BMAD Method v6** agent workflows and a **SonarCloud CI/CD pipeline** out of the box.
+[![CI](https://github.com/YOUR_ORG/YOUR_REPO/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_ORG/YOUR_REPO/actions/workflows/ci.yml)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FYOUR_ORG%2FYOUR_REPO)
+
+> One command. Five questions. Production-ready AI dev environment.
+
+A GitHub Template Repository for new SaaS projects. Ships with **BMAD Method v6** agent workflows, an interactive CLI wizard, a full **CI/CD quality pipeline**, and a self-healing **auto-bugfix** system out of the box.
 
 ---
 
@@ -9,10 +13,16 @@ Ships with **BMAD Method v6** agent workflows and a **SonarCloud CI/CD pipeline*
 
 | Layer | Tool | Purpose |
 |---|---|---|
-| AI Workflows | BMAD Method v6 | Structured agents: PM, Architect, Dev, QA, Scrum Master |
+| App Framework | Next.js 15 + React 19 | App Router, RSC, Server Actions |
+| Styling | Tailwind CSS v4 + shadcn/ui | Direction D purple theme, dark mode default |
+| Auth | Better Auth / Clerk (your choice) | Self-hosted or managed auth |
+| ORM | Prisma / Drizzle (your choice) | Schema-first or code-first DB |
+| Database | PostgreSQL (Neon prod, Docker local) | Serverless-ready |
+| AI Workflows | BMAD Method v6 | PM, Architect, Dev, QA, SM agents |
 | CI/CD | GitHub Actions | Lint → Test → SonarCloud → Build |
-| Code Quality | SonarCloud | Static analysis + coverage tracking |
-| Auto Bugfix | `_agents/workflows/BUGFIX-CI-GITHUB-ISSUES.md` | AI fixes latest CI failure from GitHub Issues |
+| Auto Bugfix | `/fix-issue <N>` in Claude Code | AI-generated fix PR on CI failure |
+| Dependency Updates | Renovate | Weekly grouped PRs, automerge |
+| Security | CodeQL + npm audit + license scan | Automated on every push |
 
 ---
 
@@ -22,47 +32,118 @@ Ships with **BMAD Method v6** agent workflows and a **SonarCloud CI/CD pipeline*
 
 Click **"Use this template"** → **"Create a new repository"** on GitHub.
 
-### 2. Clone and run setup
+> **Repository Setup (maintainers only):** After creating the template repo, go to **Settings → General** and check **"Template repository"** to enable the "Use this template" button.
+
+### 2. Run the interactive wizard
 
 ```bash
 git clone https://github.com/YOUR_ORG/YOUR_REPO.git
 cd YOUR_REPO
-bash setup.sh
+npx create-ai-template
 ```
 
-The setup script will:
-- Prompt for your SonarCloud org and project key → patches `sonar-project.properties`
-- Launch the **BMAD interactive installer** (`npx bmad-method install`)
+The wizard will:
+- Ask 5 questions with educational hints (AI methodology, auth, ORM, optional modules)
+- Install only what you chose and remove the rest
+- Show real-time progress per module
+- Display next steps and auto-bugfix preview on success
+
+Or use defaults non-interactively:
+```bash
+npx create-ai-template --yes
+```
 
 > Requires Node.js ≥ 20
 
-### 3. Add GitHub Secrets
+### 3. Configure environment
 
-Go to **Settings → Secrets and variables → Actions** in your new repo:
+```bash
+cp .env.example .env
+# Fill in your values — see comments in .env.example
+```
+
+### 4. Start local development
+
+```bash
+docker-compose up -d   # Start local PostgreSQL
+npx prisma migrate dev # Apply initial schema
+npm run dev            # Start Next.js on http://localhost:3000
+```
+
+### 5. Add GitHub Secrets
+
+Go to **Settings → Secrets and variables → Actions**:
 
 | Secret | Where to get it |
 |---|---|
 | `SONAR_TOKEN` | [sonarcloud.io](https://sonarcloud.io) → My Account → Security → Generate token |
-| `GITHUB_TOKEN` | Provided automatically by GitHub Actions — no action needed |
+| `GITHUB_TOKEN` | Provided automatically by GitHub Actions |
 
-### 4. Copy env file
+---
 
-```bash
-cp .env.example .env
-# Fill in your values
+## Auto-Bugfix Pipeline
+
+The template's killer feature: when CI fails, a structured GitHub Issue is created automatically.
+
+```
+CI fails → GitHub Issue created (job + error log + SHA + branch)
+         → Run /fix-issue <N> in Claude Code
+         → AI reads the issue, applies a targeted fix
+         → Opens a PR with [skip ci] commit (prevents infinite loop)
+         → After 3 failed attempts → needs-human label, stops
 ```
 
 ---
 
-## SonarCloud Setup (first time)
+## BMAD Agent Workflows
 
-1. Log in to [sonarcloud.io](https://sonarcloud.io) with your GitHub account
-2. Click **"+"** → **"Analyze new project"** → import your repo
-3. Choose **"With GitHub Actions"** — copy the `SONAR_TOKEN`
-4. Add `SONAR_TOKEN` as a GitHub Secret (see above)
-5. In SonarCloud project settings, set **"New Code"** definition to `Previous version`
+All 8 BMAD agents are available as slash commands immediately after cloning (no setup required):
 
-The `sonar-project.properties` file is already configured — just replace `YOUR_ORG` and `YOUR_ORG_YOUR_REPO` if you skipped `setup.sh`.
+| Agent | Slash Command | Role |
+|---|---|---|
+| Orchestrator | `/bmad-help` | Routes tasks across agents |
+| PM | `/bmad-pm` | PRD and planning |
+| Architect | `/bmad-architect` | Technical architecture |
+| UX Designer | `/bmad-ux-designer` | UI/UX specifications |
+| Dev | `/bmad-dev` | Implementation guidance |
+| QA | `/bmad-qa` | Testing strategy |
+| Scrum Master | `/bmad-sm` | Sprint planning |
+| Tech Writer | `/bmad-tech-writer` | Documentation |
+
+---
+
+## Project Structure
+
+```
+your-project/
+├── src/
+│   ├── app/                    # Next.js App Router pages
+│   │   ├── (auth)/             # Sign-in / Sign-up
+│   │   ├── dashboard/          # Protected dashboard
+│   │   └── api/                # Route Handlers
+│   ├── components/
+│   │   ├── ui/                 # shadcn/ui (do not edit)
+│   │   └── shared/             # Shared components
+│   ├── lib/
+│   │   ├── db.ts               # Database client (Prisma or Drizzle)
+│   │   ├── auth.ts             # Auth configuration
+│   │   ├── validations/        # Zod schemas
+│   │   └── utils/              # Utility functions
+│   ├── actions/                # Server Actions
+│   ├── hooks/                  # Custom React hooks
+│   └── stores/                 # Zustand stores
+├── prisma/                     # Prisma schema + migrations
+├── drizzle/                    # Drizzle schema (removed if Prisma chosen)
+├── e2e/                        # Playwright E2E tests
+├── docs/
+│   ├── decisions/              # Architecture Decision Records (ADRs)
+│   └── guides/                 # Integration + migration guides
+├── wizard/                     # npx create-ai-template package
+├── _bmad/                      # BMAD agents & config
+├── .github/workflows/          # CI/CD pipelines
+├── .env.example                # Environment variable template
+└── setup.sh                    # Passthrough to wizard
+```
 
 ---
 
@@ -71,68 +152,46 @@ The `sonar-project.properties` file is already configured — just replace `YOUR
 **Triggers:** push or PR to `main`
 
 ```
-Checkout → Setup Node 20 → npm ci → Lint → Tests + Coverage → SonarCloud Scan → Build
-                                                                          ↓ (on failure)
-                                                              GitHub Issue created with logs
+Checkout → Setup Node → npm ci → Security Audit → Lint → Tests + Coverage → SonarCloud → Build
+                                                                                    ↓ (on failure)
+                                                                       GitHub Issue auto-created
 ```
 
-On failure, the pipeline automatically opens a GitHub Issue (label: `bug`) with the last 50 lines of the failing step's log. This powers the **BUGFIX-CI-GITHUB-ISSUES** workflow.
+Coverage threshold: ≥ 85% (blocks merge if below).
 
 ---
 
-## BMAD Agent Workflows
+## Keeping Your Project Updated
 
-After running `setup.sh`, BMAD creates a `_bmad/` directory with compiled agent files.
+```bash
+npm run template:update
+```
 
-### Available agents (BMM module)
-
-| Agent | Role |
-|---|---|
-| `bmad-orchestrator` | Routes tasks across all agents |
-| `bmm-analyst` | Requirements & research |
-| `bmm-pm` | PRD and planning |
-| `bmm-architect` | Technical architecture |
-| `bmm-ux-designer` | UI/UX design |
-| `bmm-scrum-master` | Sprint planning |
-| `bmm-dev` | Implementation |
-
-Start with: `/bmad-help` in your AI editor (Claude Code, Cursor, Gemini, etc.)
-
-### Custom workflows (`_agents/workflows/`)
-
-| Workflow | Description |
-|---|---|
-| `BUGFIX-CI-GITHUB-ISSUES.md` | Reads the latest CI failure issue and auto-fixes the code |
-
-To trigger the bugfix workflow, open your AI agent and run:
-`/BUGFIX-CI-GITHUB-ISSUES`
+- Fetches latest `_bmad/`, `.github/`, and root config improvements
+- Runs `npm install` and full test suite automatically
+- **MINOR versions:** always backward-compatible (your `src/` is never touched)
+- **MAJOR versions:** migration guide provided, previous version tagged for rollback
 
 ---
 
-## Project Structure
+## Deployment
 
-```
-your-project/
-├── .github/
-│   └── workflows/
-│       └── ci.yml              # CI/CD pipeline
-├── _agents/
-│   └── workflows/              # Custom AI agent workflows
-├── _bmad/                      # BMAD agents & config (created by setup.sh)
-├── _bmad-output/               # BMAD generated artifacts
-├── src/                        # Your source code
-├── sonar-project.properties    # SonarCloud config
-├── .env.example                # Environment variable template
-├── setup.sh                    # One-time post-clone setup
-└── README.md
-```
+### Vercel (one-click)
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FYOUR_ORG%2FYOUR_REPO)
+
+Set `DATABASE_URL` to your Neon PostgreSQL connection string in Vercel environment variables.
+
+### Self-hosted (AWS / GCP / fly.io)
+
+See `docs/guides/deployment.md` for step-by-step guides.
 
 ---
 
-## CI Status Badge
+## Contributing
 
-After your first CI run, add this to your project README (replace org/repo):
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on submitting issues and PRs.
 
-```markdown
-[![CI](https://github.com/YOUR_ORG/YOUR_REPO/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_ORG/YOUR_REPO/actions/workflows/ci.yml)
-```
+- Commit format: [Conventional Commits](https://www.conventionalcommits.org/)
+- Test coverage: ≥ 85% required
+- PR review: within 48 hours
