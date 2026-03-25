@@ -12,7 +12,14 @@ export default function ErrorPage({
       <div className="text-center max-w-md">
         <h2 className="text-2xl font-semibold mb-2">Something went wrong</h2>
         <p className="text-muted-foreground mb-6">
-          {error.message || "An unexpected error occurred."}
+          {process.env.NODE_ENV === "development"
+            ? error.message
+            : "An unexpected error occurred."}
+          {error.digest && (
+            <span className="block text-xs mt-1 opacity-50">
+              Error ID: {error.digest}
+            </span>
+          )}
         </p>
         <button
           onClick={reset}
