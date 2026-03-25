@@ -29,6 +29,8 @@ describe('readConfig', () => {
       wizardVersion: '0.1.0',
       aiMethodology: 'both',
       agenticSystem: 'claude-code',
+      authProvider: 'better-auth',
+      ormChoice: 'prisma',
       modules: [
         { id: 'eslint', installState: 'pending' },
         { id: 'husky', installState: 'installed' },
@@ -54,6 +56,8 @@ describe('readConfig', () => {
       wizardVersion: '0.1.0',
       aiMethodology: 'gsd',
       agenticSystem: 'cursor',
+      authProvider: 'better-auth',
+      ormChoice: 'drizzle',
       modules: [],
       createdAt: '2026-03-15T00:00:00.000Z',
       updatedAt: '2026-03-15T00:00:00.000Z',
@@ -70,7 +74,7 @@ describe('readConfig', () => {
 describe('buildInitialConfig', () => {
   it('maps selectedModules to ModuleInstallRecord[] with installState pending', () => {
     const result = buildInitialConfig(
-      { aiMethodology: 'both', agenticSystem: 'claude-code', selectedModules: ['eslint', 'husky'] },
+      { aiMethodology: 'both', agenticSystem: 'claude-code', authProvider: 'better-auth', ormChoice: 'prisma', selectedModules: ['eslint', 'husky'] },
       '0.1.0',
     );
     expect(result.wizardVersion).toBe('0.1.0');

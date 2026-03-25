@@ -11,7 +11,7 @@ if (_nodeMajor < 20) {
 
 /**
  * create-ai-template — CLI entry point
- * Phase 2: wires runWizard + writeConfig + --yes flag
+ * Story 1.2: OS detection guard, styled banner, 5-question wizard flow
  */
 
 // CJS-safe package.json version read (no import.meta.url in CJS)
@@ -20,11 +20,17 @@ const { version } = require('../package.json') as { version: string };
 import { runWizard } from './wizard.js';
 import { buildInitialConfig, readConfig, writeConfig } from './config.js';
 import { runInstaller } from './installer.js';
+import { isWindowsNative, printWsl2Instructions } from './os-detection.js';
+
+// OS guard — runs before any prompts or imports that could fail on Windows native
+if (isWindowsNative()) {
+  printWsl2Instructions();
+}
 
 const yesMode = process.argv.includes('--yes') || process.argv.includes('-y');
 
 async function main(): Promise<void> {
-  const selections = await runWizard(yesMode);
+  const selections = await runWizard(yesMode, version);
   const existingConfig = readConfig();
   const config = buildInitialConfig(selections, version);
 

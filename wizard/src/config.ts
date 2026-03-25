@@ -25,6 +25,8 @@ export function buildInitialConfig(
     wizardVersion,
     aiMethodology: selections.aiMethodology,
     agenticSystem: selections.agenticSystem,
+    authProvider: selections.authProvider,
+    ormChoice: selections.ormChoice,
     modules: selections.selectedModules.map((id): ModuleInstallRecord => ({
       id,
       installState: 'pending',

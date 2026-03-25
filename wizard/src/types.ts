@@ -46,10 +46,14 @@ export type ModuleRegistry = Record<ModuleId, ModuleDefinition>;
 
 export type AiMethodology = 'bmad' | 'gsd' | 'both';
 export type AgenticSystem = 'claude-code' | 'cursor' | 'vscode' | 'antigravity';
+export type AuthProvider = 'better-auth' | 'clerk';
+export type OrmChoice = 'prisma' | 'drizzle';
 
 export interface UserSelections {
   aiMethodology: AiMethodology;
   agenticSystem: AgenticSystem;
+  authProvider: AuthProvider;
+  ormChoice: OrmChoice;
   selectedModules: ModuleId[];
 }
 
@@ -64,6 +68,8 @@ export interface TemplateConfig {
   wizardVersion: string;
   aiMethodology: AiMethodology;
   agenticSystem: AgenticSystem;
+  authProvider: AuthProvider;
+  ormChoice: OrmChoice;
   modules: ModuleInstallRecord[];
   createdAt: string;
   updatedAt: string;
