@@ -8,12 +8,21 @@ import {
   readdirSync,
   chmodSync,
   statSync,
+  rmSync,
 } from 'node:fs';
 import { join, dirname } from 'node:path';
-import { spinner, outro, log } from '@clack/prompts';
+import { spinner, outro, note, log } from '@clack/prompts';
 import { MODULE_REGISTRY } from './registry.js';
 import { readConfig, writeConfig } from './config.js';
 import type { UserSelections, TemplateConfig } from './types.js';
+import {
+  BETTER_AUTH_VERSION,
+  CLERK_NEXTJS_VERSION,
+  PRISMA_VERSION,
+  PRISMA_CLIENT_VERSION,
+  DRIZZLE_ORM_VERSION,
+  DRIZZLE_KIT_VERSION,
+} from './dependency-versions.js';
 
 type PackageJsonAdditions = {
   scripts?: Record<string, string>;
@@ -51,6 +60,19 @@ export function mergePackageJson(pkgPath: string, additions: PackageJsonAddition
 
 function npmInstallDevDeps(packages: string[], cwd: string): void {
   const result = spawnSync('npm', ['install', '--save-dev', ...packages], {
+    cwd,
+    stdio: 'pipe',
+    encoding: 'utf-8',
+    shell: true,
+  });
+  if (result.error) throw result.error;
+  if (result.status !== 0 && result.status !== null) {
+    throw new Error(result.stderr ?? `npm install exited with code ${result.status}`);
+  }
+}
+
+function npmInstallDeps(packages: string[], cwd: string): void {
+  const result = spawnSync('npm', ['install', ...packages], {
     cwd,
     stdio: 'pipe',
     encoding: 'utf-8',
@@ -115,6 +137,25 @@ function copyTemplateDir(templateRelPath: string, destDir: string, _yesMode: boo
   }
 }
 
+/**
+ * Fully recursive version of copyTemplateDir — handles arbitrary directory depth.
+ * Used for auth/ORM templates that have nested paths (e.g. src/lib/auth.ts).
+ */
+function copyTemplateDirDeep(srcDir: string, destDir: string): void {
+  if (!existsSync(srcDir)) return;
+  mkdirSync(destDir, { recursive: true });
+  const entries = readdirSync(srcDir, { withFileTypes: true });
+  for (const entry of entries) {
+    const srcPath = join(srcDir, entry.name);
+    const destPath = join(destDir, entry.name);
+    if (entry.isDirectory()) {
+      copyTemplateDirDeep(srcPath, destPath);
+    } else if (entry.isFile()) {
+      copyWithBackup(srcPath, destPath);
+    }
+  }
+}
+
 function runPostInstall(commands: string[], cwd: string): void {
   for (const cmd of commands) {
     // Husky install requires .git
@@ -169,6 +210,85 @@ function getPackageJsonAdditions(moduleId: string): PackageJsonAdditions {
   return map[moduleId] ?? {};
 }
 
+async function runAuthSetup(selections: UserSelections, targetDir: string): Promise<void> {
+  const isClerk = selections.authProvider === 'clerk';
+  const label = isClerk ? 'Clerk' : 'Better Auth';
+  const s = spinner();
+  s.start(`Configuring ${label}...`);
+  try {
+    const pkg = isClerk
+      ? `@clerk/nextjs@${CLERK_NEXTJS_VERSION}`
+      : `better-auth@${BETTER_AUTH_VERSION}`;
+    npmInstallDeps([pkg], targetDir);
+
+    const templateName = isClerk ? 'auth-clerk' : 'auth-better-auth';
+    const srcDir = join(__dirname, '..', 'templates', templateName);
+    copyTemplateDirDeep(srcDir, targetDir);
+
+    s.stop(`${label} configured`);
+  } catch (err) {
+    s.stop(`${label} configuration failed`);
+    const msg = err instanceof Error ? err.message : String(err);
+    log.error(`Auth setup failed: ${msg}`);
+  }
+}
+
+async function runOrmSetup(selections: UserSelections, targetDir: string): Promise<void> {
+  const isPrisma = selections.ormChoice === 'prisma';
+  const label = isPrisma ? 'Prisma' : 'Drizzle';
+  const s = spinner();
+  s.start(`Configuring ${label}...`);
+  try {
+    if (isPrisma) {
+      npmInstallDevDeps([`prisma@${PRISMA_VERSION}`], targetDir);
+      npmInstallDeps([`@prisma/client@${PRISMA_CLIENT_VERSION}`], targetDir);
+      const drizzleDir = join(targetDir, 'drizzle');
+      if (existsSync(drizzleDir)) rmSync(drizzleDir, { recursive: true, force: true });
+    } else {
+      npmInstallDeps([`drizzle-orm@${DRIZZLE_ORM_VERSION}`], targetDir);
+      npmInstallDevDeps([`drizzle-kit@${DRIZZLE_KIT_VERSION}`], targetDir);
+      const prismaDir = join(targetDir, 'prisma');
+      if (existsSync(prismaDir)) rmSync(prismaDir, { recursive: true, force: true });
+    }
+
+    const templateName = isPrisma ? 'orm-prisma' : 'orm-drizzle';
+    const srcDir = join(__dirname, '..', 'templates', templateName);
+    copyTemplateDirDeep(srcDir, targetDir);
+
+    s.stop(`${label} configured`);
+  } catch (err) {
+    s.stop(`${label} configuration failed`);
+    const msg = err instanceof Error ? err.message : String(err);
+    log.error(`ORM setup failed: ${msg}`);
+  }
+}
+
+function showSuccessScreen(opts: { installed: number; failed: number; elapsedSeconds: number }): void {
+  const { installed, failed, elapsedSeconds } = opts;
+
+  const plural = installed !== 1 ? 's' : '';
+  note(
+    `${installed} module${plural} installed in ${elapsedSeconds}s`,
+    'Setup Summary'
+  );
+
+  note(
+    `1. git push -u origin main\n2. gh secret set SONAR_TOKEN\n3. npm run dev`,
+    "What's next"
+  );
+
+  note(
+    `When CI fails → run /fix-issue <num> in Claude Code → AI opens a fix PR`,
+    'Auto-Bugfix (Killer Feature)'
+  );
+
+  if (failed > 0) {
+    outro(`Done — but ${failed} module${failed !== 1 ? 's' : ''} failed. See above for fix commands.`);
+  } else {
+    outro(`You're all set. Happy building! 🚀`);
+  }
+}
+
 export async function runInstaller(
   selections: UserSelections,
   yesMode: boolean,
@@ -204,6 +324,7 @@ export async function runInstaller(
     writeFileSync(configPath, JSON.stringify(cfg, null, 2), 'utf-8');
   };
 
+  const startTime = Date.now();
   const results: Array<{ id: string; status: 'installed' | 'failed' }> = [];
   const errors: Array<{ label: string; msg: string; devDeps: string[] }> = [];
 
@@ -280,11 +401,12 @@ export async function runInstaller(
     }
   }
 
+  // Auth and ORM setup — runs after module loop, before outro()
+  await runAuthSetup(selections, targetDir);
+  await runOrmSetup(selections, targetDir);
+
   const installed = results.filter(r => r.status === 'installed').length;
   const failed = errors.length; // use errors[] as authoritative source to stay in sync with display
-  if (failed > 0) {
-    outro(`Installed: ${installed}, Failed: ${failed} — see above for details and fix commands`);
-  } else {
-    outro(`Setup complete! ${installed} module${installed !== 1 ? 's' : ''} installed.`);
-  }
+  const elapsedSeconds = Math.round((Date.now() - startTime) / 1000);
+  showSuccessScreen({ installed, failed, elapsedSeconds });
 }

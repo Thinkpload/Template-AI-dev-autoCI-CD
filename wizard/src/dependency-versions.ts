@@ -9,6 +9,28 @@
  * Compatible with: Node.js >=20
  */
 
+// ─── Auth ────────────────────────────────────────────────────────────────────
+
+/** better-auth — self-hosted authentication library */
+export const BETTER_AUTH_VERSION = '^1.2.7'; // verify: npm info better-auth version
+
+/** @clerk/nextjs — Clerk managed auth for Next.js */
+export const CLERK_NEXTJS_VERSION = '^6.12.0'; // verify: npm info @clerk/nextjs version
+
+// ─── ORM ─────────────────────────────────────────────────────────────────────
+
+/** prisma — Prisma CLI (devDep) */
+export const PRISMA_VERSION = '^6.5.0'; // verify: npm info prisma version
+
+/** @prisma/client — Prisma runtime client (dep) */
+export const PRISMA_CLIENT_VERSION = '^6.5.0'; // verify: npm info @prisma/client version
+
+/** drizzle-orm — Drizzle runtime ORM (dep) */
+export const DRIZZLE_ORM_VERSION = '^0.41.0'; // verify: npm info drizzle-orm version
+
+/** drizzle-kit — Drizzle migrations CLI (devDep) */
+export const DRIZZLE_KIT_VERSION = '^0.30.0'; // verify: npm info drizzle-kit version
+
 // ─── AI Tooling ────────────────────────────────────────────────────────────
 // Kept in the same file as code quality versions — one diff to review all bumps.
 
