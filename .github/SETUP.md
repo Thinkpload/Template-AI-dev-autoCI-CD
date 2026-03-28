@@ -157,6 +157,60 @@ node scripts/check-licenses.js --json > license-report.json
 
 ---
 
+## Automated Releases
+
+Releases are generated automatically from conventional commits when a version tag is pushed.
+
+### How to trigger a release
+
+```bash
+# Bump version and create tag
+npm version patch   # 0.1.0 → 0.1.1
+npm version minor   # 0.1.0 → 0.2.0
+npm version major   # 0.1.0 → 1.0.0
+
+# Push the tag to trigger the release workflow
+git push origin main --tags
+```
+
+### What happens automatically
+
+When a tag matching `v*.*.*` is pushed, the `.github/workflows/release.yml` workflow:
+
+1. Checks out the full git history (`fetch-depth: 0`)
+2. Runs `npm run changelog` — updates `CHANGELOG.md` using `conventional-changelog-cli` with the Angular preset
+3. Commits `CHANGELOG.md` back to `main` as `github-actions[bot]`
+4. Creates a GitHub Release via `gh release create` with auto-generated notes
+
+### GITHUB_TOKEN permissions
+
+No extra secrets are required. The workflow uses the built-in `GITHUB_TOKEN` with `contents: write` permission, which is automatically granted by GitHub Actions. This allows:
+
+- Committing `CHANGELOG.md` back to the repository
+- Creating GitHub Releases
+
+### BREAKING CHANGE format
+
+To mark a commit as a breaking change, add a `BREAKING CHANGE:` footer to the commit message:
+
+```
+feat(auth)!: replace session cookie with JWT
+
+BREAKING CHANGE: legacy session cookies are no longer supported — clear browser cookies and re-authenticate after upgrade
+```
+
+The `BREAKING CHANGE:` footer causes `conventional-changelog` to generate a dedicated **⚠ BREAKING CHANGES** section at the top of the release entry.
+
+### Generating CHANGELOG locally
+
+```bash
+npm run changelog
+```
+
+This updates `CHANGELOG.md` in-place with all conventional commits since the last tag.
+
+---
+
 ## Local Verification
 
 Before pushing, verify the same checks locally:

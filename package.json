@@ -16,6 +16,7 @@
     "type-check": "tsc --noEmit",
     "db:seed": "tsx prisma/seed.ts",
     "template:update": "node scripts/template-update.js",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "prepare": "husky"
   },
   "dependencies": {
@@ -48,6 +49,7 @@
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.0",
     "@vitest/coverage-v8": "^2.0.0",
+    "conventional-changelog-cli": "^5.0.0",
     "drizzle-kit": "^0.29.0",
     "eslint": "^9.0.0",
     "eslint-config-next": "^15.1.0",
