@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface EmptyStateProps {
   title: string;
@@ -22,9 +23,9 @@ export function EmptyState({
       </div>
       <h2 className="text-xl font-semibold text-gray-100 mb-2">{title}</h2>
       {description && <p className="text-gray-400 mb-6 max-w-sm">{description}</p>}
-      <Button asChild>
-        <Link href={ctaHref}>{ctaLabel}</Link>
-      </Button>
+      <Link href={ctaHref} className={cn(buttonVariants(), 'min-h-11')}>
+        {ctaLabel}
+      </Link>
     </div>
   );
 }

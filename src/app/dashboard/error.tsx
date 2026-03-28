@@ -3,7 +3,9 @@
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
-export default function ErrorPage({
+// Dashboard-scoped error boundary — renders inside DashboardLayout.
+// "Try again" resets only the dashboard subtree, not the full page.
+export default function DashboardError({
   error,
   reset,
 }: {
@@ -11,7 +13,7 @@ export default function ErrorPage({
   reset: () => void;
 }) {
   return (
-    <main className="flex min-h-screen items-center justify-center px-4">
+    <div className="flex flex-1 items-center justify-center px-4 py-12">
       <Card className="max-w-md w-full text-center" role="alert" aria-live="assertive">
         <CardHeader>
           <CardTitle>Something went wrong</CardTitle>
@@ -30,6 +32,6 @@ export default function ErrorPage({
           </Button>
         </CardFooter>
       </Card>
-    </main>
+    </div>
   );
 }

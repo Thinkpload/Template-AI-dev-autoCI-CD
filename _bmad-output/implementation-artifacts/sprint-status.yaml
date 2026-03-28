@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-03-22
-last_updated: 2026-03-29 # story 3.5 in-progress
+last_updated: 2026-03-29 # story 3.5 review
 project: "!Template_BMAD+auto-CI-CD"
 project_key: NOKEY
 tracking_system: file-system
@@ -65,7 +65,7 @@ development_status:
   3-2-authentication-flow-sign-in-sign-up: review # implemented 2026-03-29
   3-3-dashboard-shell-and-navigation: review # implemented 2026-03-29
   3-4-custom-web-components-gradienthero-featurecard-codeblock: review # implemented 2026-03-29
-  3-5-loading-states-empty-states-and-error-boundaries: in-progress
+  3-5-loading-states-empty-states-and-error-boundaries: review # implemented 2026-03-29
   epic-3-retrospective: optional
 
   # Epic 4: Database Layer & Schema Management
