@@ -1,0 +1,30 @@
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+
+interface EmptyStateProps {
+  title: string;
+  description?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+}
+
+export function EmptyState({
+  title,
+  description,
+  ctaLabel = 'Get started',
+  ctaHref = '#',
+}: EmptyStateProps) {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[400px] text-center px-4">
+      {/* Decorative illustration */}
+      <div className="text-6xl mb-6" aria-hidden="true">
+        📋
+      </div>
+      <h2 className="text-xl font-semibold text-gray-100 mb-2">{title}</h2>
+      {description && <p className="text-gray-400 mb-6 max-w-sm">{description}</p>}
+      <Button asChild>
+        <Link href={ctaHref}>{ctaLabel}</Link>
+      </Button>
+    </div>
+  );
+}
