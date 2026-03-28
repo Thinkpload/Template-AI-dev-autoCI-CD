@@ -1,0 +1,103 @@
+# generated: 2026-03-22
+# last_updated: 2026-03-25 # story 1.2 created
+# project: !Template_BMAD+auto-CI-CD
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: _bmad-output/implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created (via create-story)
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - SM typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+
+generated: 2026-03-22
+last_updated: 2026-03-28 # story 2.4 review
+project: "!Template_BMAD+auto-CI-CD"
+project_key: NOKEY
+tracking_system: file-system
+story_location: _bmad-output/implementation-artifacts
+
+development_status:
+  # Epic 1: Project Foundation & CLI Wizard Setup
+  epic-1: in-progress
+  1-1-github-template-repository-initialization: done # reviewed 2026-03-25
+  1-2-cli-wizard-welcome-os-detection-and-prompt-flow: done # reviewed 2026-03-26
+  1-3-cli-wizard-module-installation-and-feedback: done # reviewed 2026-03-26
+  1-4-cli-wizard-auth-and-orm-selection-with-cleanup: review
+  1-5-cli-wizard-success-screen-and-auto-bugfix-preview: review
+  epic-1-retrospective: optional
+
+  # Epic 2: CI/CD & Code Quality Pipeline
+  epic-2: in-progress
+  2-1-pre-commit-hooks-husky-commitlint-lint-staged: review
+  2-2-github-actions-ci-pipeline-main-workflow: review
+  2-3-dependency-security-renovate-codeql-license-check: review
+  2-4-automated-release-and-changelog: review
+  epic-2-retrospective: optional
+
+  # Epic 3: Core Application Shell (Next.js + Web UI)
+  epic-3: in-progress
+  3-1-landing-page-direction-d-bold-and-purple: review
+  3-2-authentication-flow-sign-in-sign-up: backlog
+  3-3-dashboard-shell-and-navigation: backlog
+  3-4-custom-web-components-gradienthero-featurecard-codeblock: backlog
+  3-5-loading-states-empty-states-and-error-boundaries: backlog
+  epic-3-retrospective: optional
+
+  # Epic 4: Database Layer & Schema Management
+  epic-4: backlog
+  4-1-database-client-and-initial-schema: backlog
+  4-2-migration-safety-and-seed-script: backlog
+  4-3-docker-local-development-database: backlog
+  epic-4-retrospective: optional
+
+  # Epic 5: Auto-Bugfix Pipeline (Killer Feature)
+  epic-5: backlog
+  5-1-ci-failure-auto-issue-creation: backlog
+  5-2-fix-issue-claude-code-skill-integration: backlog
+  epic-5-retrospective: optional
+
+  # Epic 6: Governance & Community Infrastructure
+  epic-6: backlog
+  6-1-contributing-md-and-issue-templates: backlog
+  6-2-codeowners-and-pr-automation: backlog
+  6-3-adr-templates-and-github-discussions: backlog
+  epic-6-retrospective: optional
+
+  # Epic 7: Evergreen Update System
+  epic-7: backlog
+  7-1-template-update-script: backlog
+  7-2-backward-compatibility-guarantee: backlog
+  7-3-versioning-and-weekly-release-process: backlog
+  epic-7-retrospective: optional
+
+  # Epic 8: Integration Stubs & AI/Background Job Layer
+  epic-8: backlog
+  8-1-bmad-agent-integration-verification: backlog
+  8-2-upstash-redis-rate-limiting-stub: backlog
+  8-3-optional-integration-stubs-sentry-inngest-ai-providers: backlog
+  epic-8-retrospective: optional
