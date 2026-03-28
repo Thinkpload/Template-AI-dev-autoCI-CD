@@ -1,0 +1,545 @@
+diff --git a/wizard/src/dependency-versions.ts b/wizard/src/dependency-versions.ts
+index df1b9aa..cfd1ea5 100644
+--- a/wizard/src/dependency-versions.ts
++++ b/wizard/src/dependency-versions.ts
+@@ -9,6 +9,28 @@
+  * Compatible with: Node.js >=20
+  */
+ 
++// ─── Auth ────────────────────────────────────────────────────────────────────
++
++/** better-auth — self-hosted authentication library */
++export const BETTER_AUTH_VERSION = '^1.2.7'; // verify: npm info better-auth version
++
++/** @clerk/nextjs — Clerk managed auth for Next.js */
++export const CLERK_NEXTJS_VERSION = '^6.12.0'; // verify: npm info @clerk/nextjs version
++
++// ─── ORM ─────────────────────────────────────────────────────────────────────
++
++/** prisma — Prisma CLI (devDep) */
++export const PRISMA_VERSION = '^6.5.0'; // verify: npm info prisma version
++
++/** @prisma/client — Prisma runtime client (dep) */
++export const PRISMA_CLIENT_VERSION = '^6.5.0'; // verify: npm info @prisma/client version
++
++/** drizzle-orm — Drizzle runtime ORM (dep) */
++export const DRIZZLE_ORM_VERSION = '^0.41.0'; // verify: npm info drizzle-orm version
++
++/** drizzle-kit — Drizzle migrations CLI (devDep) */
++export const DRIZZLE_KIT_VERSION = '^0.30.0'; // verify: npm info drizzle-kit version
++
+ // ─── AI Tooling ────────────────────────────────────────────────────────────
+ // Kept in the same file as code quality versions — one diff to review all bumps.
+ 
+diff --git a/wizard/src/installer.ts b/wizard/src/installer.ts
+index b1c3a62..3f2d227 100644
+--- a/wizard/src/installer.ts
++++ b/wizard/src/installer.ts
+@@ -8,12 +8,21 @@ import {
+   readdirSync,
+   chmodSync,
+   statSync,
++  rmSync,
+ } from 'node:fs';
+ import { join, dirname } from 'node:path';
+-import { spinner, outro, log } from '@clack/prompts';
++import { spinner, outro, note, log } from '@clack/prompts';
+ import { MODULE_REGISTRY } from './registry.js';
+ import { readConfig, writeConfig } from './config.js';
+ import type { UserSelections, TemplateConfig } from './types.js';
++import {
++  BETTER_AUTH_VERSION,
++  CLERK_NEXTJS_VERSION,
++  PRISMA_VERSION,
++  PRISMA_CLIENT_VERSION,
++  DRIZZLE_ORM_VERSION,
++  DRIZZLE_KIT_VERSION,
++} from './dependency-versions.js';
+ 
+ type PackageJsonAdditions = {
+   scripts?: Record<string, string>;
+@@ -62,6 +71,19 @@ function npmInstallDevDeps(packages: string[], cwd: string): void {
+   }
+ }
+ 
++function npmInstallDeps(packages: string[], cwd: string): void {
++  const result = spawnSync('npm', ['install', ...packages], {
++    cwd,
++    stdio: 'pipe',
++    encoding: 'utf-8',
++    shell: true,
++  });
++  if (result.error) throw result.error;
++  if (result.status !== 0 && result.status !== null) {
++    throw new Error(result.stderr ?? `npm install exited with code ${result.status}`);
++  }
++}
++
+ function writeHookFile(src: string, dest: string): void {
+   const content = readFileSync(src, 'utf-8').replace(/\r\n/g, '\n');
+   writeFileSync(dest, content, 'utf-8');
+@@ -115,6 +137,25 @@ function copyTemplateDir(templateRelPath: string, destDir: string, _yesMode: boo
+   }
+ }
+ 
++/**
++ * Fully recursive version of copyTemplateDir — handles arbitrary directory depth.
++ * Used for auth/ORM templates that have nested paths (e.g. src/lib/auth.ts).
++ */
++function copyTemplateDirDeep(srcDir: string, destDir: string): void {
++  if (!existsSync(srcDir)) return;
++  mkdirSync(destDir, { recursive: true });
++  const entries = readdirSync(srcDir, { withFileTypes: true });
++  for (const entry of entries) {
++    const srcPath = join(srcDir, entry.name);
++    const destPath = join(destDir, entry.name);
++    if (entry.isDirectory()) {
++      copyTemplateDirDeep(srcPath, destPath);
++    } else if (entry.isFile()) {
++      copyWithBackup(srcPath, destPath);
++    }
++  }
++}
++
+ function runPostInstall(commands: string[], cwd: string): void {
+   for (const cmd of commands) {
+     // Husky install requires .git
+@@ -169,6 +210,85 @@ function getPackageJsonAdditions(moduleId: string): PackageJsonAdditions {
+   return map[moduleId] ?? {};
+ }
+ 
++async function runAuthSetup(selections: UserSelections, targetDir: string): Promise<void> {
++  const isClerk = selections.authProvider === 'clerk';
++  const label = isClerk ? 'Clerk' : 'Better Auth';
++  const s = spinner();
++  s.start(`Configuring ${label}...`);
++  try {
++    const pkg = isClerk
++      ? `@clerk/nextjs@${CLERK_NEXTJS_VERSION}`
++      : `better-auth@${BETTER_AUTH_VERSION}`;
++    npmInstallDeps([pkg], targetDir);
++
++    const templateName = isClerk ? 'auth-clerk' : 'auth-better-auth';
++    const srcDir = join(__dirname, '..', 'templates', templateName);
++    copyTemplateDirDeep(srcDir, targetDir);
++
++    s.stop(`${label} configured`);
++  } catch (err) {
++    s.stop(`${label} configuration failed`);
++    const msg = err instanceof Error ? err.message : String(err);
++    log.error(`Auth setup failed: ${msg}`);
++  }
++}
++
++async function runOrmSetup(selections: UserSelections, targetDir: string): Promise<void> {
++  const isPrisma = selections.ormChoice === 'prisma';
++  const label = isPrisma ? 'Prisma' : 'Drizzle';
++  const s = spinner();
++  s.start(`Configuring ${label}...`);
++  try {
++    if (isPrisma) {
++      npmInstallDevDeps([`prisma@${PRISMA_VERSION}`], targetDir);
++      npmInstallDeps([`@prisma/client@${PRISMA_CLIENT_VERSION}`], targetDir);
++      const drizzleDir = join(targetDir, 'drizzle');
++      if (existsSync(drizzleDir)) rmSync(drizzleDir, { recursive: true, force: true });
++    } else {
++      npmInstallDeps([`drizzle-orm@${DRIZZLE_ORM_VERSION}`], targetDir);
++      npmInstallDevDeps([`drizzle-kit@${DRIZZLE_KIT_VERSION}`], targetDir);
++      const prismaDir = join(targetDir, 'prisma');
++      if (existsSync(prismaDir)) rmSync(prismaDir, { recursive: true, force: true });
++    }
++
++    const templateName = isPrisma ? 'orm-prisma' : 'orm-drizzle';
++    const srcDir = join(__dirname, '..', 'templates', templateName);
++    copyTemplateDirDeep(srcDir, targetDir);
++
++    s.stop(`${label} configured`);
++  } catch (err) {
++    s.stop(`${label} configuration failed`);
++    const msg = err instanceof Error ? err.message : String(err);
++    log.error(`ORM setup failed: ${msg}`);
++  }
++}
++
++function showSuccessScreen(opts: { installed: number; failed: number; elapsedSeconds: number }): void {
++  const { installed, failed, elapsedSeconds } = opts;
++
++  const plural = installed !== 1 ? 's' : '';
++  note(
++    `${installed} module${plural} installed in ${elapsedSeconds}s`,
++    'Setup Summary'
++  );
++
++  note(
++    `1. git push -u origin main\n2. gh secret set SONAR_TOKEN\n3. npm run dev`,
++    "What's next"
++  );
++
++  note(
++    `When CI fails → run /fix-issue <num> in Claude Code → AI opens a fix PR`,
++    'Auto-Bugfix (Killer Feature)'
++  );
++
++  if (failed > 0) {
++    outro(`Done — but ${failed} module${failed !== 1 ? 's' : ''} failed. See above for fix commands.`);
++  } else {
++    outro(`You're all set. Happy building! 🚀`);
++  }
++}
++
+ export async function runInstaller(
+   selections: UserSelections,
+   yesMode: boolean,
+@@ -204,6 +324,7 @@ export async function runInstaller(
+     writeFileSync(configPath, JSON.stringify(cfg, null, 2), 'utf-8');
+   };
+ 
++  const startTime = Date.now();
+   const results: Array<{ id: string; status: 'installed' | 'failed' }> = [];
+   const errors: Array<{ label: string; msg: string; devDeps: string[] }> = [];
+ 
+@@ -280,11 +401,12 @@ export async function runInstaller(
+     }
+   }
+ 
++  // Auth and ORM setup — runs after module loop, before outro()
++  await runAuthSetup(selections, targetDir);
++  await runOrmSetup(selections, targetDir);
++
+   const installed = results.filter(r => r.status === 'installed').length;
+   const failed = errors.length; // use errors[] as authoritative source to stay in sync with display
+-  if (failed > 0) {
+-    outro(`Installed: ${installed}, Failed: ${failed} — see above for details and fix commands`);
+-  } else {
+-    outro(`Setup complete! ${installed} module${installed !== 1 ? 's' : ''} installed.`);
+-  }
++  const elapsedSeconds = Math.round((Date.now() - startTime) / 1000);
++  showSuccessScreen({ installed, failed, elapsedSeconds });
+ }
+diff --git a/wizard/templates/auth-better-auth/src/lib/auth.ts b/wizard/templates/auth-better-auth/src/lib/auth.ts
+new file mode 100644
+index 0000000..6f4d80b
+--- /dev/null
++++ b/wizard/templates/auth-better-auth/src/lib/auth.ts
+@@ -0,0 +1,9 @@
++import { betterAuth } from 'better-auth';
++import { db } from './db';
++
++export const auth = betterAuth({
++  database: db,
++  emailAndPassword: { enabled: true },
++});
++
++export type Session = typeof auth.$Infer.Session;
+diff --git a/wizard/templates/auth-clerk/src/lib/auth.ts b/wizard/templates/auth-clerk/src/lib/auth.ts
+new file mode 100644
+index 0000000..5eb8054
+--- /dev/null
++++ b/wizard/templates/auth-clerk/src/lib/auth.ts
+@@ -0,0 +1,5 @@
++// Clerk auth — configured via environment variables
++// Set NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY and CLERK_SECRET_KEY in .env
++
++export { auth, currentUser, clerkClient } from '@clerk/nextjs/server';
++export { useAuth, useUser, useSession } from '@clerk/nextjs';
+diff --git a/wizard/templates/orm-drizzle/src/lib/db.ts b/wizard/templates/orm-drizzle/src/lib/db.ts
+new file mode 100644
+index 0000000..6d84637
+--- /dev/null
++++ b/wizard/templates/orm-drizzle/src/lib/db.ts
+@@ -0,0 +1,4 @@
++import { drizzle } from 'drizzle-orm/node-postgres';
++import * as schema from '../../drizzle/schema';
++
++export const db = drizzle(process.env['DATABASE_URL']!, { schema });
+diff --git a/wizard/templates/orm-prisma/src/lib/db.ts b/wizard/templates/orm-prisma/src/lib/db.ts
+new file mode 100644
+index 0000000..b7273f7
+--- /dev/null
++++ b/wizard/templates/orm-prisma/src/lib/db.ts
+@@ -0,0 +1,7 @@
++import { PrismaClient } from '@prisma/client';
++
++const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
++
++export const db = globalForPrisma.prisma ?? new PrismaClient();
++
++if (process.env['NODE_ENV'] !== 'production') globalForPrisma.prisma = db;
+diff --git a/wizard/tests/installer.test.ts b/wizard/tests/installer.test.ts
+index 341596f..af03050 100644
+--- a/wizard/tests/installer.test.ts
++++ b/wizard/tests/installer.test.ts
+@@ -18,13 +18,14 @@ const mockSpinnerStop = vi.fn();
+ vi.mock('@clack/prompts', () => ({
+   intro: vi.fn(),
+   outro: vi.fn(),
++  note: vi.fn(),
+   spinner: vi.fn(() => ({ start: mockSpinnerStart, stop: mockSpinnerStop })),
+-  log: { warn: vi.fn(), error: vi.fn(), info: vi.fn() },
++  log: { warn: vi.fn(), error: vi.fn(), info: vi.fn(), step: vi.fn() },
+ }));
+ 
+ import { runInstaller, mergePackageJson } from '../src/installer.js';
+ import { spawnSync } from 'node:child_process';
+-import { log } from '@clack/prompts';
++import { log, outro, note } from '@clack/prompts';
+ import type { UserSelections } from '../src/types.js';
+ 
+ let tmpDir: string;
+@@ -47,8 +48,10 @@ afterEach(() => {
+ });
+ 
+ const baseSelections: UserSelections = {
+-  aiMethodology: 'bmad-only',
++  aiMethodology: 'bmad-only' as UserSelections['aiMethodology'],
+   agenticSystem: 'cursor',
++  authProvider: 'better-auth',
++  ormChoice: 'prisma',
+   selectedModules: ['husky'],
+ };
+ 
+@@ -62,13 +65,20 @@ describe('runInstaller', () => {
+         wizardVersion: '1.0.0',
+         aiMethodology: 'bmad-only',
+         agenticSystem: 'cursor',
++        authProvider: 'better-auth',
++        ormChoice: 'prisma',
+         modules: [{ id: 'husky', installState: 'installed' }],
+         createdAt: new Date().toISOString(),
+         updatedAt: new Date().toISOString(),
+       })
+     );
+     await runInstaller(selections, true, tmpDir);
+-    expect(spawnSync).not.toHaveBeenCalled();
++    // husky devDeps (husky@...) should NOT be installed (idempotency guard)
++    const calls = vi.mocked(spawnSync).mock.calls;
++    const huskyInstallCall = calls.find(c =>
++      Array.isArray(c[1]) && c[1].includes('--save-dev') && c[1].some((a: unknown) => typeof a === 'string' && (a as string).includes('husky@'))
++    );
++    expect(huskyInstallCall).toBeUndefined();
+   });
+ 
+   it('calls spawnSync with npm install --save-dev and devDeps for pending modules', async () => {
+@@ -233,6 +243,222 @@ describe('consolidated error display', () => {
+   });
+ });
+ 
++describe('auth setup', () => {
++  it('better-auth: installs better-auth runtime dep (no --save-dev)', async () => {
++    const selections: UserSelections = { ...baseSelections, authProvider: 'better-auth', selectedModules: [] };
++    await runInstaller(selections, true, tmpDir);
++    const calls = vi.mocked(spawnSync).mock.calls;
++    const authCall = calls.find(c => Array.isArray(c[1]) && c[1].some((a: unknown) => typeof a === 'string' && a.includes('better-auth')));
++    expect(authCall).toBeDefined();
++    // Must NOT include --save-dev
++    expect(authCall?.[1]).not.toContain('--save-dev');
++  });
++
++  it('better-auth: writes src/lib/auth.ts to target directory', async () => {
++    const selections: UserSelections = { ...baseSelections, authProvider: 'better-auth', selectedModules: [] };
++    await runInstaller(selections, true, tmpDir);
++    const { existsSync: fsExists } = await import('node:fs');
++    expect(fsExists(join(tmpDir, 'src', 'lib', 'auth.ts'))).toBe(true);
++  });
++
++  it('clerk: installs @clerk/nextjs runtime dep (no --save-dev)', async () => {
++    const selections: UserSelections = { ...baseSelections, authProvider: 'clerk', selectedModules: [] };
++    await runInstaller(selections, true, tmpDir);
++    const calls = vi.mocked(spawnSync).mock.calls;
++    const authCall = calls.find(c => Array.isArray(c[1]) && c[1].some((a: unknown) => typeof a === 'string' && a.includes('@clerk/nextjs')));
++    expect(authCall).toBeDefined();
++    expect(authCall?.[1]).not.toContain('--save-dev');
++  });
++
++  it('clerk: writes src/lib/auth.ts to target directory', async () => {
++    const selections: UserSelections = { ...baseSelections, authProvider: 'clerk', selectedModules: [] };
++    await runInstaller(selections, true, tmpDir);
++    const { existsSync: fsExists } = await import('node:fs');
++    expect(fsExists(join(tmpDir, 'src', 'lib', 'auth.ts'))).toBe(true);
++  });
++});
++
++describe('orm setup', () => {
++  beforeEach(() => {
++    // Create both ORM stub dirs as they exist in the real template repo
++    mkdirSync(join(tmpDir, 'prisma'), { recursive: true });
++    writeFileSync(join(tmpDir, 'prisma', 'schema.prisma'), '// stub');
++    mkdirSync(join(tmpDir, 'drizzle'), { recursive: true });
++    writeFileSync(join(tmpDir, 'drizzle', 'schema.ts'), 'export {};');
++  });
++
++  it('prisma: installs prisma devDep and @prisma/client runtime dep', async () => {
++    const selections: UserSelections = { ...baseSelections, ormChoice: 'prisma', selectedModules: [] };
++    await runInstaller(selections, true, tmpDir);
++    const calls = vi.mocked(spawnSync).mock.calls;
++    const prismaDevCall = calls.find(c => Array.isArray(c[1]) && c[1].includes('--save-dev') && c[1].some((a: unknown) => typeof a === 'string' && a.includes('prisma@')));
++    expect(prismaDevCall).toBeDefined();
++    const prismaClientCall = calls.find(c => Array.isArray(c[1]) && !c[1].includes('--save-dev') && c[1].some((a: unknown) => typeof a === 'string' && a.includes('@prisma/client')));
++    expect(prismaClientCall).toBeDefined();
++  });
++
++  it('prisma: deletes drizzle/ directory', async () => {
++    const { existsSync: fsExists } = await import('node:fs');
++    const selections: UserSelections = { ...baseSelections, ormChoice: 'prisma', selectedModules: [] };
++    await runInstaller(selections, true, tmpDir);
++    expect(fsExists(join(tmpDir, 'drizzle'))).toBe(false);
++  });
++
++  it('prisma: keeps prisma/ directory intact', async () => {
++    const { existsSync: fsExists } = await import('node:fs');
++    const selections: UserSelections = { ...baseSelections, ormChoice: 'prisma', selectedModules: [] };
++    await runInstaller(selections, true, tmpDir);
++    expect(fsExists(join(tmpDir, 'prisma'))).toBe(true);
++  });
++
++  it('prisma: writes src/lib/db.ts to target directory', async () => {
++    const { existsSync: fsExists } = await import('node:fs');
++    const selections: UserSelections = { ...baseSelections, ormChoice: 'prisma', selectedModules: [] };
++    await runInstaller(selections, true, tmpDir);
++    expect(fsExists(join(tmpDir, 'src', 'lib', 'db.ts'))).toBe(true);
++  });
++
++  it('drizzle: installs drizzle-orm runtime dep and drizzle-kit devDep', async () => {
++    const selections: UserSelections = { ...baseSelections, ormChoice: 'drizzle', selectedModules: [] };
++    await runInstaller(selections, true, tmpDir);
++    const calls = vi.mocked(spawnSync).mock.calls;
++    const drizzleOrmCall = calls.find(c => Array.isArray(c[1]) && !c[1].includes('--save-dev') && c[1].some((a: unknown) => typeof a === 'string' && a.includes('drizzle-orm')));
++    expect(drizzleOrmCall).toBeDefined();
++    const drizzleKitCall = calls.find(c => Array.isArray(c[1]) && c[1].includes('--save-dev') && c[1].some((a: unknown) => typeof a === 'string' && a.includes('drizzle-kit')));
++    expect(drizzleKitCall).toBeDefined();
++  });
++
++  it('drizzle: deletes prisma/ directory', async () => {
++    const { existsSync: fsExists } = await import('node:fs');
++    const selections: UserSelections = { ...baseSelections, ormChoice: 'drizzle', selectedModules: [] };
++    await runInstaller(selections, true, tmpDir);
++    expect(fsExists(join(tmpDir, 'prisma'))).toBe(false);
++  });
++
++  it('drizzle: keeps drizzle/ directory intact', async () => {
++    const { existsSync: fsExists } = await import('node:fs');
++    const selections: UserSelections = { ...baseSelections, ormChoice: 'drizzle', selectedModules: [] };
++    await runInstaller(selections, true, tmpDir);
++    expect(fsExists(join(tmpDir, 'drizzle'))).toBe(true);
++  });
++
++  it('drizzle: writes src/lib/db.ts to target directory', async () => {
++    const { existsSync: fsExists } = await import('node:fs');
++    const selections: UserSelections = { ...baseSelections, ormChoice: 'drizzle', selectedModules: [] };
++    await runInstaller(selections, true, tmpDir);
++    expect(fsExists(join(tmpDir, 'src', 'lib', 'db.ts'))).toBe(true);
++  });
++});
++
++describe('.template-config.json persists auth and orm choices', () => {
++  // Note: runInstaller reads/writes config during module processing.
++  // buildInitialConfig (called in index.ts before runInstaller) writes authProvider + ormChoice.
++  // These tests verify that runInstaller preserves authProvider/ormChoice from a pre-written config.
++  it('config retains authProvider when a module is installed', async () => {
++    const selections: UserSelections = { ...baseSelections, authProvider: 'better-auth', selectedModules: ['eslint'] };
++    // Pre-write config with authProvider (as buildInitialConfig does in index.ts)
++    writeFileSync(
++      join(tmpDir, '.template-config.json'),
++      JSON.stringify({
++        wizardVersion: '0.1.0',
++        aiMethodology: 'both',
++        agenticSystem: 'claude-code',
++        authProvider: 'better-auth',
++        ormChoice: 'prisma',
++        modules: [{ id: 'eslint', installState: 'pending' }],
++        createdAt: new Date().toISOString(),
++        updatedAt: new Date().toISOString(),
++      })
++    );
++    await runInstaller(selections, true, tmpDir);
++    const cfg = JSON.parse(readFileSync(join(tmpDir, '.template-config.json'), 'utf-8'));
++    expect(cfg.authProvider).toBe('better-auth');
++  });
++
++  it('config retains ormChoice when a module is installed', async () => {
++    const selections: UserSelections = { ...baseSelections, ormChoice: 'drizzle', selectedModules: ['eslint'] };
++    writeFileSync(
++      join(tmpDir, '.template-config.json'),
++      JSON.stringify({
++        wizardVersion: '0.1.0',
++        aiMethodology: 'both',
++        agenticSystem: 'claude-code',
++        authProvider: 'better-auth',
++        ormChoice: 'drizzle',
++        modules: [{ id: 'eslint', installState: 'pending' }],
++        createdAt: new Date().toISOString(),
++        updatedAt: new Date().toISOString(),
++      })
++    );
++    await runInstaller(selections, true, tmpDir);
++    const cfg = JSON.parse(readFileSync(join(tmpDir, '.template-config.json'), 'utf-8'));
++    expect(cfg.ormChoice).toBe('drizzle');
++  });
++});
++
++describe('success screen', () => {
++  it('note() is called with content containing the number of installed modules', async () => {
++    const selections: UserSelections = { ...baseSelections, selectedModules: ['husky'] };
++    await runInstaller(selections, true, tmpDir);
++    const noteCalls = vi.mocked(note).mock.calls;
++    const summaryCall = noteCalls.find(c => typeof c[0] === 'string' && /\d+\s+module/i.test(c[0]));
++    expect(summaryCall).toBeDefined();
++  });
++
++  it('note() is called with content containing /fix-issue (auto-bugfix preview)', async () => {
++    const selections: UserSelections = { ...baseSelections, selectedModules: [] };
++    await runInstaller(selections, true, tmpDir);
++    const noteCalls = vi.mocked(note).mock.calls;
++    const autoBugfixCall = noteCalls.find(c =>
++      (typeof c[0] === 'string' && c[0].includes('/fix-issue')) ||
++      (typeof c[1] === 'string' && c[1].includes('fix-issue'))
++    );
++    expect(autoBugfixCall).toBeDefined();
++  });
++
++  it('outro() is called exactly once at the end', async () => {
++    const selections: UserSelections = { ...baseSelections, selectedModules: [] };
++    await runInstaller(selections, true, tmpDir);
++    expect(vi.mocked(outro)).toHaveBeenCalledTimes(1);
++  });
++
++  it('outro() message contains a success phrase', async () => {
++    const selections: UserSelections = { ...baseSelections, selectedModules: [] };
++    await runInstaller(selections, true, tmpDir);
++    expect(vi.mocked(outro)).toHaveBeenCalledWith(expect.stringMatching(/set|ready|done|complete|building/i));
++  });
++
++  it('note() is called with content containing git push command (What\'s next section)', async () => {
++    const selections: UserSelections = { ...baseSelections, selectedModules: [] };
++    await runInstaller(selections, true, tmpDir);
++    const noteCalls = vi.mocked(note).mock.calls;
++    const nextstepsCall = noteCalls.find(c =>
++      (typeof c[0] === 'string' && c[0].includes('git push')) ||
++      (typeof c[1] === 'string' && c[1].includes('What'))
++    );
++    expect(nextstepsCall).toBeDefined();
++  });
++
++  it('when modules fail: outro() is still called exactly once (success screen shown even on failure)', async () => {
++    vi.mocked(spawnSync).mockReturnValue({ status: 1, error: undefined, stderr: 'fail' } as ReturnType<typeof spawnSync>);
++    const selections: UserSelections = { ...baseSelections, selectedModules: ['husky'] };
++    await runInstaller(selections, true, tmpDir);
++    expect(vi.mocked(outro)).toHaveBeenCalledTimes(1);
++  });
++
++  it('when modules fail: failure info appears in note() or outro() output', async () => {
++    vi.mocked(spawnSync).mockReturnValue({ status: 1, error: undefined, stderr: 'fail' } as ReturnType<typeof spawnSync>);
++    const selections: UserSelections = { ...baseSelections, selectedModules: ['husky'] };
++    await runInstaller(selections, true, tmpDir);
++    const allTextCalls = [
++      ...vi.mocked(note).mock.calls.map(c => String(c[0] ?? '')),
++      ...vi.mocked(outro).mock.calls.map(c => String(c[0] ?? '')),
++    ];
++    const hasFail = allTextCalls.some(t => /fail|fix|error/i.test(t));
++    expect(hasFail).toBe(true);
++  });
++});
++
+ describe('coverage threshold assertions', () => {
+   it('vitest.config.ts template file contains correct coverage thresholds', () => {
+     const templatePath = resolve(__dirname, '../templates/vitest/vitest.config.ts');

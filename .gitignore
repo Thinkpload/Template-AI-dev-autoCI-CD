@@ -55,3 +55,6 @@ prisma/migrations/**/migration_lock.toml
 .vercel
 .turbo
 .claude/settings.local.json
+
+# ── Husky ─────────────────────────────────────────────────────
+.husky/_

@@ -1,0 +1,88 @@
+name: Dependency Review
+
+on:
+  pull_request:
+    branches: [main]
+
+# Cancel in-progress runs for the same PR to save CI minutes
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: moderate
+          deny-licenses: >-
+            GPL-2.0,
+            GPL-2.0-only,
+            GPL-2.0-or-later,
+            GPL-3.0,
+            GPL-3.0-only,
+            GPL-3.0-or-later,
+            AGPL-3.0,
+            AGPL-3.0-only,
+            AGPL-3.0-or-later,
+            LGPL-2.0,
+            LGPL-2.0-only,
+            LGPL-2.0-or-later,
+            LGPL-2.1,
+            LGPL-2.1-only,
+            LGPL-2.1-or-later,
+            LGPL-3.0,
+            LGPL-3.0-only,
+            LGPL-3.0-or-later
+
+  license-check:
+    name: License Compliance Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      # --legacy-peer-deps required: better-auth/drizzle-kit peer dep conflict
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Run license check
+        id: license-check
+        run: node scripts/check-licenses.js --json > license-report.json 2>&1; echo "exit_code=$?" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      - name: Display license check results
+        run: node scripts/check-licenses.js
+
+      - name: Upload license report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: license-report
+          path: license-report.json
+          retention-days: 7
+
+      - name: Fail if blocked licenses found
+        if: steps.license-check.outputs.exit_code != '0'
+        run: |
+          echo "❌ License check failed. See license-report artifact for details."
+          exit 1
