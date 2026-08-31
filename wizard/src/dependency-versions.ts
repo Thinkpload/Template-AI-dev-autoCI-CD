@@ -48,13 +48,13 @@ export const GSD_VERSION = '2.0.0';
 export const HUSKY_VERSION = '^9.1.7';
 
 /** lint-staged — run linters on staged files only */
-export const LINT_STAGED_VERSION = '^15.2.10';
+export const LINT_STAGED_VERSION = '17.4.1';
 
 /** @commitlint/cli — validate commit messages */
-export const COMMITLINT_CLI_VERSION = '^19.6.1';
+export const COMMITLINT_CLI_VERSION = '21.2.2';
 
 /** @commitlint/config-conventional — Conventional Commits 1.0 ruleset */
-export const COMMITLINT_CONVENTIONAL_VERSION = '^19.6.0';
+export const COMMITLINT_CONVENTIONAL_VERSION = '21.2.2';
 
 /** @biomejs/biome — unified linter and formatter */
 export const BIOME_VERSION = '^1.9.0'; // verify: npm info @biomejs/biome version
@@ -62,12 +62,12 @@ export const BIOME_VERSION = '^1.9.0'; // verify: npm info @biomejs/biome versio
 // ─── Testing ────────────────────────────────────────────────────────────────
 
 /** vitest — unit/integration test runner v4 */
-export const VITEST_VERSION = '^4.1.0';
+export const VITEST_VERSION = '4.1.11';
 
 /** @vitest/coverage-v8 — V8-based coverage for vitest */
-export const VITEST_COVERAGE_V8_VERSION = '^4.1.0';
+export const VITEST_COVERAGE_V8_VERSION = '4.1.11';
 
 // ─── TypeScript ─────────────────────────────────────────────────────────────
 
 /** typescript — TypeScript compiler */
-export const TYPESCRIPT_VERSION = '^5.7.3';
+export const TYPESCRIPT_VERSION = '7.0.2';
